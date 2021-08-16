@@ -1,5 +1,5 @@
 import discord
-from discord_slash import SlashCommand, SlashContext
+from discord_slash import SlashCommand
 import sys
 
 client = discord.Client(intents=discord.Intents.all()) #The bot itself
@@ -12,13 +12,5 @@ async def on_ready():
 @slash.slash(name="test", description="This is a test command")
 async def test(ctx):
     await ctx.send(content = "Hello World!")
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
 
 client.run(str(sys.argv[1])) #Use token as argument when running script from console.
