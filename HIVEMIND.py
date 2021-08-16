@@ -9,10 +9,9 @@ slash = SlashCommand(client, sync_commands=True) #Implements slash commands
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
-@slash.slash(name="test")
-async def test(ctx: SlashContext):
-    embed = Embed(title="Embed Test")
-    await ctx.send(embed = embed)
+@slash.slash(name="test", description="This is a test command")
+async def test(ctx):
+    await ctx.send(content = "Hello World!")
 
 @client.event
 async def on_message(message):
