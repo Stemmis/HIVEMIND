@@ -2,10 +2,8 @@ import discord
 import discord_slash
 import sys
 
-from discord_slash import SlashCommand, SlashContext
-
-client = discord.Client() #The bot itself
-slash = SlashCommand(client) #Implements slash commands
+client = discord.Client(intents=discord.Intents.all()) #The bot itself
+slash = SlashCommand(client, sync_commands=True) #Implements slash commands
 
 @client.event
 async def on_ready():
