@@ -2,6 +2,9 @@ import discord
 import discord_slash
 import sys
 
+from discord import Client, Intents, Embed
+from discord_slash import SlashCommand, SlashContext
+
 client = discord.Client() #The bot itself
 slash = SlashCommand(client) #Implements slash commands
 
