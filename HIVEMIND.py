@@ -6,7 +6,8 @@ from discord import Client, Intents, Embed
 from discord_slash import SlashCommand, SlashContext
 
 client = discord.Client() #The bot itself
-slash = SlashCommand(client) #Implements slash commands
+bot = Client(intents=Intents.default())
+slash = SlashCommand(bot) #Implements slash commands
 
 @client.event
 async def on_ready():
