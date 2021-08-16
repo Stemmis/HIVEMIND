@@ -1,4 +1,5 @@
 import discord
+import sys
 
 client = discord.Client()
 
@@ -14,4 +15,4 @@ async def on_message(message):
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
 
-client.run('ODc2ODM2MDk4NjgzMzE0MjA4.YRp3QA.UVrVUzMRHcSpQDbw9jjiqaG2A3Y')
+client.run(str(sys.argv[1])) #Use token as argument when running script from console.
