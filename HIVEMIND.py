@@ -1,5 +1,5 @@
 import discord
-import discord_slash
+from discord_slash import SlashCommand, SlashContext
 import sys
 
 client = discord.Client(intents=discord.Intents.all()) #The bot itself
