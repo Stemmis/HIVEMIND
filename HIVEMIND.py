@@ -60,10 +60,16 @@ async def on_ready():
                         description="Modifier to roll",
                         option_type=4,
                         required=False
+                    ),
+                    create_option(
+                        name="comment",
+                        description="Optional comment - say what the roll is for",
+                        option_type=3,
+                        required=False
                     )
                 ]
             )
-async def roll(ctx, pool: int, sides: int, modifier: int = 0):
+async def roll(ctx, pool: int, sides: int, modifier: int = 0, comment:str = ""):
     if sides > MAX_VALUE:
         if pool == 1:
             await ctx.send(content = "Die exceeds size limit. Maybe you should roll a smaller die.")
@@ -73,16 +79,27 @@ async def roll(ctx, pool: int, sides: int, modifier: int = 0):
     if pool == 1:
         try:
             result = await numberGen(1, 1, sides, modifier)
-            await ctx.send(content = f"Rolled **{pool}** die with **{sides}** sides, with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
+            if(comment != ""):
+                await ctx.send(content = f"```diff\n+{comment}\n```Rolled **{pool}** die with **{sides}** sides, with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
+            else:
+                await ctx.send(content = f"Rolled **{pool}** die with **{sides}** sides, with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
         except:
             print(traceback.format_exc())
     else:
-        await ctx.defer()
-        result = await numberGen(pool, 1, sides, modifier)
-        message = f"Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
-        if len(message) > 2000:
-            message = f"Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
-        await ctx.send(content = message)
+        if(comment != ""):
+            await ctx.defer()
+            result = await numberGen(pool, 1, sides, modifier)
+            message = f"```diff\n+{comment}\n```Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
+            if len(message) > 2000:
+                message = f"```diff\n+{comment}\n```Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
+            await ctx.send(content = message)
+        else:
+            await ctx.defer()
+            result = await numberGen(pool, 1, sides, modifier)
+            message = f"Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
+            if len(message) > 2000:
+                message = f"Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
+            await ctx.send(content = message)
 
 
 
