@@ -174,21 +174,21 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
                 workList = result[1]
                 workList.extend(bonusList)
                 workList.sort()
-                bonusList = workList[0:bonus-1]
-                result[1] = workList[bonus:]
-                result[0] = sum(worklist[bonus:]) + modifier
-                if (difficulty > 0 and difficulty < result[0]):
-                    DoS = (result[0]-difficulty)//5 + 1
+                bonusList = workList[0:bonus]
+                workList = workList[bonus:]
+                sumTotal = sum(workList) + modifier
+                if (difficulty > 0 and difficulty < sumTotal):
+                    DoS = (sumTotal-difficulty)//5 + 1
                     if DoS >= 4:
                         DoS = 4
-                    await ctx.send(f"Rolled a total of **{result[0]} for {DoS} Degrees of Success.**\n```{result[1]} + {modifier}```\n**Discarded:**\n```{bonusList}```")
-                elif (difficulty > 0 and difficulty < result[0]):
-                    DoF = (difficulty - result[0])//5 + 1
+                    await ctx.send(f"Rolled a total of **{sumTotal}** for **{DoS}** Degrees of Success.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
+                elif (difficulty > 0 and difficulty < sumTotal):
+                    DoF = (difficulty - sumTotal)//5 + 1
                     if DoF >= 2:
                         DoF = 2
-                    await ctx.send(f"Rolled a total of **{result[0]} for {DoF} Degrees of Failure.**\n```{result[1]} + {modifier}```\n**Discarded:**\n```{bonusList}```")
+                    await ctx.send(f"Rolled a total of **{sumTotal}** for **{DoF}** Degrees of Failure.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
                 else:
-                    await ctx.send(f"Rolled a total of **{result[0]}.\n```{result[1]} + {modifier}```\n**Discarded:**\n```{bonusList}```")
+                    await ctx.send(f"Rolled a total of **{sumTotal}**.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
             except:
                 print(traceback.format_exc())
         else:
@@ -196,14 +196,14 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
                 DoS = (result[0]-difficulty)//5 + 1
                 if DoS >= 4:
                     DoS = 4
-                await ctx.send(f"Rolled a total of **{result[0]} for {DoS} Degrees of Success.**\n```{result[1]} + {modifier}```")
+                await ctx.send(f"Rolled a total of **{result[0]}** for **{DoS}** Degrees of Success.\n```{result[1]} + {modifier}```")
             elif (difficulty > 0 and difficulty < result[0]):
                 DoF = (difficulty - result[0])//5 + 1
                 if DoF >= 2:
                     DoF = 2
-                await ctx.send(f"Rolled a total of **{result[0]} for {DoF} Degrees of Failure.**\n```{result[1]} + {modifier}```")
+                await ctx.send(f"Rolled a total of **{result[0]}** for **{DoF}** Degrees of Failure.\n```{result[1]} + {modifier}```")
             else:
-                await ctx.send(f"Rolled a total of **{result[0]}.\n```{result[1]} + {modifier}```")
+                await ctx.send(f"Rolled a total of **{result[0]}**.\n```{result[1]} + {modifier}```")
     except:
         print(traceback.format_exc())
 
