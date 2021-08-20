@@ -73,15 +73,15 @@ async def roll(ctx, pool: int, sides: int, modifier: int = 0):
     if pool == 1:
         try:
             result = await numberGen(1, 1, sides, modifier)
-            await ctx.send(content = f"Rolled {pool} die with {sides} sides, with a modifier of {modifier}.\nYour result is {result}.")
+            await ctx.send(content = f"Rolled **{pool}** die with **{sides}** sides, with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
         except:
             print(traceback.format_exc())
     else:
         await ctx.defer()
         result = await numberGen(pool, 1, sides, modifier)
-        message = f"Rolled {pool} dice with {sides} sides, with a modifier of {modifier}.\nYour result is {result}"
+        message = f"Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
         if len(message) > 2000:
-            message = f"Rolled {pool} dice with {sides} sides, with a modifier of {modifier}.\nYour total is {result[0]}."
+            message = f"Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
         await ctx.send(content = message)
 
 
