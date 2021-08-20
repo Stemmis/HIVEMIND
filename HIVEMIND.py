@@ -182,7 +182,7 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
                     if DoS >= 4:
                         DoS = 4
                     await ctx.send(f"Rolled a total of **{sumTotal}** for **{DoS}** Degrees of Success.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
-                elif (difficulty > 0 and difficulty < sumTotal):
+                elif (difficulty > 0 and difficulty > sumTotal):
                     DoF = (difficulty - sumTotal)//5 + 1
                     if DoF >= 2:
                         DoF = 2
@@ -197,7 +197,7 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
                 if DoS >= 4:
                     DoS = 4
                 await ctx.send(f"Rolled a total of **{result[0]}** for **{DoS}** Degrees of Success.\n```{result[1]} + {modifier}```")
-            elif (difficulty > 0 and difficulty < result[0]):
+            elif (difficulty > 0 and difficulty > result[0]):
                 DoF = (difficulty - result[0])//5 + 1
                 if DoF >= 2:
                     DoF = 2
