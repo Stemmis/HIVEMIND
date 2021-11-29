@@ -4,10 +4,12 @@ import sourcerandom
 import sys
 import traceback
 import threading
+import numexpr
 from sourcerandom import OnlineRandomnessSource
 from discord_slash import SlashCommand, SlashCommandOptionType
 from discord_slash.utils.manage_commands import create_option
-from discord_slash.context import MenuContext
+from discord_slash.utils.manage_components import create_select, create_select_option, create_actionrow, wait_for_component
+from discord_slash.context import MenuContext, ComponentContext
 from discord_slash.model import ContextMenuType
 
 #Defines
@@ -35,8 +37,73 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     
     
+#Set prefix
+@client.event
+async def on_message(message):
+    try:
+        if message.content.startswith('?'):
+            await parse_command(message.content[1:len(message.content)], message.channel)
+    except:
+        print(traceback.format_exc())
+        print("Something went wrong! Please try again.")
+        
+#Handle ? commands
+@client.event
+async def parse_command(message, channel):
+    try:
+        if message.startswith('roll '):
+            if message.strip() == 'roll':
+                print('Specified an invalid dice expression.')
+            else:
+                await get_roll(message[5:len(message)], channel)
+        elif message.startswith('roll-sr '):
+            if message.strip() == 'roll-sr':
+                print('Specified an invalid dice expression.')
+            else:
+                await get_shadowrun(message[8:len(message)], channel)
+        else:
+            print('Not a command')
+    except:
+        print(traceback.format_exc())
+        print("Something went wrong with the command! Please try again.")
+        channel.send("You specified an invalid command! Please try again.")
+        
+#Help command - Necessary now that alternative syntax is an option
+
+
+@slash.slash(name="help",
+                description="Get a list of commands, uses, and syntax"
+                )
+async def help(ctx):
+#    helpmenu = create_select(
+#        options = [
+#            create_select_option("?roll", value="roll"),
+#            create_select_option("?roll-sr", value="roll-sr")
+#        ],
+#        placeholder="Choose a command",
+#        min_values=1,
+##        max_values=1
+#    )
+#    try:
+#        await ctx.send("Remember to use the **?** prefix for all HIVEMIND commands.", components = [create_actionrow(helpmenu)])
+#        select_ctx: ComponentContext = await wait_for_component(client, components=helpmenu)
+#        await ctx.edit_origin(content=ctx.selected_options[0])
+#    except:
+#        print(traceback.format_exc())
+    await ctx.send(">>> ***HIVEMIND Commands***\n\n**Roll**\n*Description*\nThe default roll command. Rolls a user-specified number of dice with a user-specified number of sides, and adds an optional modifier.\n*Syntax*\n?roll [Number of Dice]d[Number of Sides] (+ or - [Modifier])\ne.g. ?roll 4d8+10\n\n**Roll-SR**\n*Description*\nRoll command for the Shadowrun tabletop roleplaying game. Rolls a user-specified number of d6's and counts hits, up to a user-specified limit.\n*Syntax*\n?roll-sr [Number of Dice]d[Limit]\ne.g. ?roll-sr 12d9")
+
+
+
+#async def helpMessages(ctx, selected_options)
+#    if(selected_options[0] = '?roll':
+        
     
-    
+#@client.event
+#async def on_component(ctx: ComponentContext):
+#    await ctx.edit_origin(content=ctx.selected_options[0])
+
+
+
 #The default dice rolling function. 
 #This function includes two options: The number of dice to be rolled (pool) and the number of sides on each die (sides).
 #This function also includes an optional modifier, to add or subtract to the function.
@@ -101,6 +168,47 @@ async def roll(ctx, pool: int, sides: int, modifier: int = 0, comment:str = ""):
                 message = f"Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
             await ctx.send(content = message)
 
+#Regular ? implementation of above
+async def get_roll(edited_message, channel):
+    pool,size = edited_message.split("d")
+    pool = int(pool)
+    add = size.find('+')
+    sub = size.find('-')
+    if (sub != -1 and add == -1):
+        mod = size.split("-",1)
+        size = mod[0]
+        mod = mod[1]
+        if (mod.find("-") != -1):
+            mod = "-" + mod
+            numexpr.evaluate(mod)
+        else:
+            mod = "-" + mod
+            mod = int(mod)
+    elif (sub == -1 and add != -1):
+        mod = size.split("+",1)
+        size = mod[0]
+        mod = mod[1]
+        if (mod.find("+") != -1):
+            mod = numexper.evaluate(mod)
+    elif (sub < add and sub > -1 and add > -1): #if subtraction comes first
+        mod = size.split("-",1)
+        size = mod[0]
+        mod = "-" + mod[1]
+        mod = numexpr.evaluate(mod)
+    elif (add < sub and add > -1 and sub >-1): #if addition comes first
+        mod = size.split("+",1)
+        size = mod[0]
+        mod = numexpr.evaluate(mod[1])
+    else:
+        mod = 0
+    size = int(size)
+    result = await numberGen(pool, 1, size, mod)
+    message = f"Rolled **{pool}** dice with **{size}** sides, with a modifier of **{mod}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
+    if len(message) > 2000:
+        message = f"Rolled **{pool}** dice with **{size}** sides, with a modifier of **{mod}**.\nYour total is **{result[0]}**."
+    await channel.send(content = message)
+    
+
 
 
 
@@ -144,7 +252,31 @@ async def rollshadowrun(ctx, pool:int, limit: int):
             await ctx.send(f"Rolled **{min(hits,limit)}** hits. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
     except:
         print(traceback.format_exc())
-    
+        
+#Shadowrun non-slash workaround
+async def get_shadowrun(edited_message, ctx):
+    pool,limit = edited_message.split("d")
+    pool = int(pool)
+    limit = int(limit)
+    ones = 0
+    hits = 0
+    try: 
+        result = await numberGen(pool, 1, 6, 0)
+        result = result[1]
+        for val in result:
+            if val == 1:
+                ones += 1
+            if val >= 5:
+                hits += 1
+        if ones >= pool/2:
+            if hits == 0:
+                await ctx.send(f"**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+            else:
+                await ctx.send(f"Rolled **{min(hits,limit)}** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+        else:
+            await ctx.send(f"Rolled **{min(hits,limit)}** hits. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+    except:
+        print(traceback.format_exc())
 
 
 
