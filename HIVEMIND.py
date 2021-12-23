@@ -188,8 +188,7 @@ async def get_roll(edited_message, channel):
         mod = size.split("+",1)
         size = mod[0]
         mod = mod[1]
-        if (mod.find("+") != -1):
-            mod = numexper.evaluate(mod)
+        mod = numexper.evaluate(mod)
     elif (sub < add and sub > -1 and add > -1): #if subtraction comes first
         mod = size.split("-",1)
         size = mod[0]
