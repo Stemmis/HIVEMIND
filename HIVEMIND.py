@@ -56,6 +56,8 @@ async def parse_command(message, channel):
                 print('Specified an invalid dice expression.')
             else:
                 await get_roll(message[5:len(message)], channel)
+        elif message.startswith('help'):
+            help(channel)
         elif message.startswith('roll-sr '):
             if message.strip() == 'roll-sr':
                 print('Specified an invalid dice expression.')
@@ -66,6 +68,11 @@ async def parse_command(message, channel):
                 print('Specified an invalid dice expression.')
             else:
                 await get_swordchronicle(message[8:len(message)], channel)
+        elif message.startswith('row'):
+            if message.strip() == 'row':
+                await get_row(None, channel)
+            else:
+                await get_row(message[4:len(message)], channel)
         else:
             print('Not a command')
     except:
@@ -95,7 +102,7 @@ async def help(ctx):
 #        await ctx.edit_origin(content=ctx.selected_options[0])
 #    except:
 #        print(traceback.format_exc())
-    await ctx.send(">>> ***HIVEMIND Commands***\n\n**Roll**\n*Description*\nThe default roll command. Rolls a user-specified number of dice with a user-specified number of sides, and adds an optional modifier.\n*Syntax*\n?roll [Number of Dice]d[Number of Sides] (+ or - [Modifier])\ne.g. ?roll 4d8+10\n\n**Roll-SR**\n*Description*\nRoll command for the Shadowrun tabletop roleplaying game. Rolls a user-specified number of d6's and counts hits, up to a user-specified limit.\n*Syntax*\n?roll-sr [Number of Dice]d[Limit]\ne.g. ?roll-sr 12d9\n\n**Roll-SC**\n*Description*\nRoll command for the Sword Chronicle tabletop roleplaying game. Rolls a user-specified number of d6's and adds them. Allows for optional bonus dice, modifiers, or difficulty.\n*Syntax*\n?roll-sc [Number of Dice]d([Number of Bonus]b[Difficulty of Test]d(+ or - [Modifier]))\ne.g. ?roll 5d2b9d+3")
+    await ctx.send(">>> ***HIVEMIND Commands***\n\n**Roll**\n*Description*\nThe default roll command. Rolls a user-specified number of dice with a user-specified number of sides, and adds an optional modifier.\n*Syntax*\n?roll [Number of Dice]d[Number of Sides] (+ or - [Modifier])\ne.g. ?roll 4d8+10\n\n**Roll-SR**\n*Description*\nRoll command for the Shadowrun tabletop roleplaying game. Rolls a user-specified number of d6's and counts hits, up to a user-specified limit.\n*Syntax*\n?roll-sr [Number of Dice]d[Limit]\ne.g. ?roll-sr 12d9\n\n**Roll-SC**\n*Description*\nRoll command for the Sword Chronicle tabletop roleplaying game. Rolls a user-specified number of d6's and adds them. Allows for optional bonus dice, modifiers, or difficulty.\n*Syntax*\n?roll-sc [Number of Dice]d([Number of Bonus]b[Difficulty of Test]d(+ or - [Modifier]))\ne.g. ?roll 5d2b9d+3\n\n**Roll-Warhammer**\n*Description*\nRolls a percentile dice, as used in the Warhammer 40k family of tabletop roleplaying games. Allows for an optional threshold to beat for determining degrees of success or failure, and adds an optional modifier.\n*Syntax*\n?row ([Threshold]v[Modifier])\ne.g. ?row 45v-30")
 
 
 
@@ -216,8 +223,99 @@ async def get_roll(edited_message, channel):
     
 
 
-
-
+@slash.slash(name="repeatroll", 
+                description="Roll the same dice repeatedly.",
+                options = [
+                    create_option(
+                        name="pool",
+                        description="Number of dice in your pool",
+                        option_type=4,
+                        required=True
+                    ),
+                    create_option(
+                        name="sides",
+                        description="Number of sides on each die",
+                        option_type=4,
+                        required=True
+                    ),
+                    create_option(
+                        name="repetition",
+                        description="How many times you'd like to roll",
+                        option_type=4,
+                        required=True
+                    ),
+                    create_option(
+                        name="modifier",
+                        description="Modifier to roll",
+                        option_type=4,
+                        required=False
+                    ),
+                    create_option(
+                        name="comment",
+                        description="Optional comment - say what the roll is for",
+                        option_type=3,
+                        required=False
+                    )
+                ]
+            )
+async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int = 0, comment:str = ""):
+    if sides > MAX_VALUE:
+        if pool == 1:
+            await ctx.send(content = "Die exceeds size limit. Maybe you should roll a smaller die.")
+        else:
+            await ctx.send(content = "Dice exceed size limit. Maybe you should roll smaller dice.")
+        raise ValueError(f"Die has too many sides! {sides}")
+    if pool == 1:
+        try:
+            result = await numberGen(1, 1, sides, modifier)
+            result[1][0] += modifier
+            for rep in range(1,repetition):
+                newResult = await numberGen(1, 1, sides, modifier)
+                result[0] += newResult[0]
+                result[1].append(newResult[1] + modifier)
+            if(comment != ""):
+                await ctx.send(content = f"```diff\n+{comment}\n```Rolled **{pool}** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
+            else:
+                await ctx.send(content = f"Rolled **{pool}** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
+        except:
+            print(traceback.format_exc())
+    else:
+        if(comment != ""):
+            await ctx.defer()
+            try:
+                result = await numberGen(pool, 1, sides, modifier)
+                for index in result[1]:
+                    result[1][index] += modifier
+                for rep in range(1,repetition):
+                    newResult = await numberGen(pool, 1, sides, modifier)
+                    for index in newResult[1]:
+                        result[1][index] += modifier
+                    result[0] += newResult[0]
+                    result[1].append(newResult[1])
+                message = f"```diff\n+{comment}\n```Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
+                if len(message) > 2000:
+                    message = f"```diff\n+{comment}\n```Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
+                await ctx.send(content = message)
+            except:
+                print(traceback.format_exc())
+        else:
+            await ctx.defer()
+            try:
+                result = await numberGen(pool, 1, sides, modifier)
+                for index in result[1]:
+                    result[1][index] += modifier
+                for rep in range(1,repetition):
+                    newResult = await numberGen(pool, 1, sides, modifier)
+                    for index in newResult[1]:
+                        result[1][index] += modifier
+                    result[0] += newResult[0]
+                    result[1].append(newResult[1])
+                message = f"Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
+                if len(message) > 2000:
+                    message = f"Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
+                await ctx.send(content = message)
+            except:
+                print(traceback.format_exc())
 #Roll dice for the Shadowrun system.
 #Roll a pool of d6's, with each 5 or 6 being a "hit".
 #You cannot exceed your limit on hits; also, if half of your rolls were ones, you GLITCH. If you got no rolls and glitch, you CRITICAL GLITCH.
@@ -362,6 +460,8 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
     except:
         print(traceback.format_exc())
 
+
+#Sword Chronicle non-slash workaround
 async def get_swordchronicle(edited_message, ctx):
     if edited_message.find("d") != edited_message.rfind("d"):
         pool,otherBit,mod = edited_message.split("d")
@@ -436,8 +536,100 @@ async def testfunction(ctx: MenuContext):
         hidden=True
     )
     
-    
-    
+
+#Roll dice for the Warhammer 40k percentile dice systems.
+#Roll a d100. Optionally include a number you're trying to beat for degrees of success/failure, or modifiers.
+@slash.slash(name="row",
+                description = "Roll dice for percentile dice systems, such as the Warhammer 40k family",
+                options = [
+                    create_option(
+                        name = "threshold",
+                        description = "The number you are trying to beat",
+                        option_type = 4,
+                        required = False
+                    ),
+                    create_option(
+                        name = "modifier",
+                        description = "Modifier to add to your roll",
+                        option_type = 4,
+                        required = False
+                    )
+                ]
+            )
+async def row(ctx, threshold:int = 0, modifier:int = 0):
+    try:
+        result = await numberGen(1, 1, 100, modifier)
+        roll = result[1][0]
+        result = result[0]
+        if threshold != 0:
+            DoS = (result-threshold)//10
+            if modifier != 0:
+                if result <= threshold:
+                    DoS = -DoS
+                    await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}** vs **{threshold}**.\n**Succeeded** with **{DoS}** Degrees of Success!")
+                if result > threshold:
+                    await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}** vs **{threshold}**.\n**Failed** with **{DoS}** Degrees of Failure!")
+            else:
+                if result <= threshold:
+                    DoS = -DoS
+                    await ctx.send(f"Rolled a **{result}** vs **{threshold}**.\n**Succeeded** with **{DoS}** Degrees of Success!")
+                if result > threshold:
+                    await ctx.send(f"Rolled a **{result}** vs **{threshold}**.\n**Failed** with **{DoS}** Degrees of Failure!")
+        else:
+            if modifier != 0:
+                await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}**.")
+            else:
+                await ctx.send(f"Rolled a **{result}**.")
+    except:
+        print(traceback.format_exc())
+        
+#Row non-slash workaround
+async def get_row(edited_message, ctx):
+    if edited_message == None:
+        try:
+            result = await numberGen(1, 1, 100, 0)
+            result = result[0]
+            await ctx.send(f"Rolled a **{result}**.")
+        except:
+            print(traceback.format_exc())
+    else:
+        modifier = 0
+        threshold = None
+        if edited_message.find("v") != -1:
+            threshold,modifier = edited_message.split("v")
+            threshold = int(threshold)
+            modifier = "0" + modifier
+            modifier = numexpr.evaluate(modifier)
+            try:
+                result = await numberGen(1, 1, 100, modifier)
+                roll = result[1][0]
+                result = result[0]
+                DoS = (result-threshold)//10 + 1
+                if modifier != 0:
+                    if result <= threshold:
+                        DoS = -DoS
+                        await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}** vs **{threshold}**.\n**Succeeded** with **{DoS}** Degrees of Success!")
+                    if result > threshold:
+                        await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}** vs **{threshold}**.\n**Failed** with **{DoS}** Degrees of Failure!")
+                else:
+                    if result <= threshold:
+                        DoS = -DoS
+                        await ctx.send(f"Rolled a **{result}** vs **{threshold}**.\n**Succeeded** with **{DoS}** Degrees of Success!")
+                    if result > threshold:
+                        await ctx.send(f"Rolled a **{result}** vs **{threshold}**.\n**Failed** with **{DoS}** Degrees of Failure!")
+            except:
+                print(traceback.format_exc())
+        else:
+            modifier = numexpr.evaluate(modifier)
+            try:
+                result = await numberGen(1, 1, 100, modifier)
+                roll = result[1][0]
+                result = result[0]
+                await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}**.")
+            except:
+                print(traceback.format_exc())
+
+
 
 #The rolling itself! This function generates random numbers. 
 #Count is the quantity of numbers.
