@@ -61,12 +61,17 @@ async def parse_command(message, channel):
                 print('Specified an invalid dice expression.')
             else:
                 await get_shadowrun(message[8:len(message)], channel)
+        elif message.startswith('roll-sc '):
+            if message.strip() == 'roll-sc':
+                print('Specified an invalid dice expression.')
+            else:
+                await get_swordchronicle(message[8:len(message)], channel)
         else:
             print('Not a command')
     except:
         print(traceback.format_exc())
         print("Something went wrong with the command! Please try again.")
-        channel.send("You specified an invalid command! Please try again.")
+        await channel.send("You specified an invalid command! Please try again.")
         
 #Help command - Necessary now that alternative syntax is an option
 
@@ -90,7 +95,7 @@ async def help(ctx):
 #        await ctx.edit_origin(content=ctx.selected_options[0])
 #    except:
 #        print(traceback.format_exc())
-    await ctx.send(">>> ***HIVEMIND Commands***\n\n**Roll**\n*Description*\nThe default roll command. Rolls a user-specified number of dice with a user-specified number of sides, and adds an optional modifier.\n*Syntax*\n?roll [Number of Dice]d[Number of Sides] (+ or - [Modifier])\ne.g. ?roll 4d8+10\n\n**Roll-SR**\n*Description*\nRoll command for the Shadowrun tabletop roleplaying game. Rolls a user-specified number of d6's and counts hits, up to a user-specified limit.\n*Syntax*\n?roll-sr [Number of Dice]d[Limit]\ne.g. ?roll-sr 12d9")
+    await ctx.send(">>> ***HIVEMIND Commands***\n\n**Roll**\n*Description*\nThe default roll command. Rolls a user-specified number of dice with a user-specified number of sides, and adds an optional modifier.\n*Syntax*\n?roll [Number of Dice]d[Number of Sides] (+ or - [Modifier])\ne.g. ?roll 4d8+10\n\n**Roll-SR**\n*Description*\nRoll command for the Shadowrun tabletop roleplaying game. Rolls a user-specified number of d6's and counts hits, up to a user-specified limit.\n*Syntax*\n?roll-sr [Number of Dice]d[Limit]\ne.g. ?roll-sr 12d9\n\n**Roll-SC**\n*Description*\nRoll command for the Sword Chronicle tabletop roleplaying game. Rolls a user-specified number of d6's and adds them. Allows for optional bonus dice, modifiers, or difficulty.\n*Syntax*\n?roll-sc [Number of Dice]d([Number of Bonus]b[Difficulty of Test]d(+ or - [Modifier]))\ne.g. ?roll 5d2b9d+3")
 
 
 
@@ -357,7 +362,70 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
     except:
         print(traceback.format_exc())
 
-        
+async def get_swordchronicle(edited_message, ctx):
+    if edited_message.find("d") != edited_message.rfind("d"):
+        pool,otherBit,mod = edited_message.split("d")
+        hasDif = True
+    else:
+        pool,otherBit = edited_message.split("d")
+        hasDif = False
+    pool = int(pool)
+    modifier = 0
+    bonus = 0
+    difficulty = 0
+    if otherBit!=None:
+        if otherBit.find("b") != -1:
+            bonus,otherBit = otherBit.split("b")
+            bonus = int(bonus)
+        if (otherBit.find("+") != -1) or (otherBit.find("-") != -1):
+            modifier = "0"+otherBit
+            modifier = numexpr.evaluate(modifier)
+        if hasDif:
+            difficulty = int(otherBit)
+    if hasDif:
+        modifier = "0"+mod
+        modifier = numexpr.evaluate(modifier)
+    try: 
+        result = await numberGen(pool, 1, 6, 0)
+        if bonus!=0:
+            try:
+                bonusList = await numberGen(bonus, 1, 6, 0)
+                bonusList = bonusList[1]
+                workList = result[1]
+                workList.extend(bonusList)
+                workList.sort()
+                bonusList = workList[0:bonus]
+                workList = workList[bonus:]
+                sumTotal = sum(workList) + modifier
+                if (difficulty > 0 and difficulty < sumTotal):
+                    DoS = (sumTotal-difficulty)//5 + 1
+                    if DoS >= 4:
+                        DoS = 4
+                    await ctx.send(f"Rolled a total of **{sumTotal}** for **{DoS}** Degrees of Success.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
+                elif (difficulty > 0 and difficulty > sumTotal):
+                    DoF = (difficulty - sumTotal)//5 + 1
+                    if DoF >= 2:
+                        DoF = 2
+                    await ctx.send(f"Rolled a total of **{sumTotal}** for **{DoF}** Degrees of Failure.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
+                else:
+                    await ctx.send(f"Rolled a total of **{sumTotal}**.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
+            except:
+                print(traceback.format_exc())
+        else:
+            if (difficulty > 0 and difficulty < result[0]):
+                DoS = (result[0]-difficulty)//5 + 1
+                if DoS >= 4:
+                    DoS = 4
+                await ctx.send(f"Rolled a total of **{result[0]}** for **{DoS}** Degrees of Success.\n```{result[1]} + {modifier}```")
+            elif (difficulty > 0 and difficulty > result[0]):
+                DoF = (difficulty - result[0])//5 + 1
+                if DoF >= 2:
+                    DoF = 2
+                await ctx.send(f"Rolled a total of **{result[0]}** for **{DoF}** Degrees of Failure.\n```{result[1]} + {modifier}```")
+            else:
+                await ctx.send(f"Rolled a total of **{result[0]}**.\n```{result[1]} + {modifier}```")
+    except:
+        print(traceback.format_exc())
 
 #Random test command, please ignore. Testing menus functions.
 @slash.context_menu(target=ContextMenuType.MESSAGE,
