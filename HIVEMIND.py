@@ -267,53 +267,77 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
         raise ValueError(f"Die has too many sides! {sides}")
     if pool == 1:
         try:
-            result = await numberGen(1, 1, sides, modifier)
-            result[1][0] += modifier
-            for rep in range(1,repetition):
-                newResult = await numberGen(1, 1, sides, modifier)
-                result[0] += newResult[0]
-                result[1].append(newResult[1] + modifier)
+            result = await numberGen(repetition, 1, sides, 0)
+            for index in result[1]:
+                index += modifier
+            result[0] += (modifier*repetition)
             if(comment != ""):
-                await ctx.send(content = f"```diff\n+{comment}\n```Rolled **{pool}** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
+                await ctx.send(content = f"```diff\n+{comment}\n```Rolled **1** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
             else:
-                await ctx.send(content = f"Rolled **{pool}** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
+                await ctx.send(content = f"Rolled **1** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
+            message = f"Your individual pool totals are:```"
+            for x in range(0,repetition):
+                message += (f"\nPool {x}: {result[1][x]+modifier}")
+            message += ("```")
+            if len(message) < 2000:
+                await ctx.send(content = message)
         except:
             print(traceback.format_exc())
     else:
         if(comment != ""):
             await ctx.defer()
             try:
-                result = await numberGen(pool, 1, sides, modifier)
+                newPool = pool * repetition
+                result = await numberGen(newPool, 1, sides, 0)
                 for index in result[1]:
-                    result[1][index] += modifier
-                for rep in range(1,repetition):
-                    newResult = await numberGen(pool, 1, sides, modifier)
-                    for index in newResult[1]:
-                        result[1][index] += modifier
-                    result[0] += newResult[0]
-                    result[1].append(newResult[1])
-                message = f"```diff\n+{comment}\n```Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
+                    index += modifier
+                total = int(result[0])
+                total += (newPool*pool)
+                message = f"```diff\n+{comment}\n```Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{total}**.\n```{result[1]}```"
                 if len(message) > 2000:
-                    message = f"```diff\n+{comment}\n```Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
+                    message = f"```diff\n+{comment}\n```Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour total is **{total}**."
                 await ctx.send(content = message)
+                message = f"Your individual pool totals are:```"
+                currentPoolSum = 0
+                iter = 0
+                for x in range(0,repetition):
+                    for index in range(0, pool):
+                        currentPoolSum += result[1][iter]
+                        iter += 1
+                    currentPoolSum += modifier
+                    message += (f"\nPool {x+1}: {currentPoolSum}")
+                    currentPoolSum = 0
+                message += ("```")
+                if len(message) < 2000:
+                    await ctx.send(content = message)
             except:
                 print(traceback.format_exc())
         else:
             await ctx.defer()
             try:
-                result = await numberGen(pool, 1, sides, modifier)
+                newPool = pool * repetition
+                result = await numberGen(newPool, 1, sides, 0)
                 for index in result[1]:
-                    result[1][index] += modifier
-                for rep in range(1,repetition):
-                    newResult = await numberGen(pool, 1, sides, modifier)
-                    for index in newResult[1]:
-                        result[1][index] += modifier
-                    result[0] += newResult[0]
-                    result[1].append(newResult[1])
-                message = f"Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
+                    index += modifier
+                total = int(result[0])
+                total += (newPool*pool)
+                message = f"Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{total}**.\n```{result[1]}```"
                 if len(message) > 2000:
-                    message = f"Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
+                    message = f"Rolled **{pool}** dice with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour total is **{total}**."
                 await ctx.send(content = message)
+                message = f"Your individual pool totals are:```"
+                currentPoolSum = 0
+                iter = 0
+                for x in range(0,repetition):
+                    for index in range(0, pool):
+                        currentPoolSum += result[1][iter]
+                        iter += 1
+                    currentPoolSum += modifier
+                    message += (f"\nPool {x+1}: {currentPoolSum}")
+                    currentPoolSum = 0
+                message += ("```")
+                if len(message) < 2000:
+                    await ctx.send(content = message)
             except:
                 print(traceback.format_exc())
 #Roll dice for the Shadowrun system.
