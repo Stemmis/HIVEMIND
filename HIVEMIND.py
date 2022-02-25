@@ -278,7 +278,7 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
                 await ctx.send(content = f"Rolled **1** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{total}**.\n```{result[1]}```")
             message = f"Your individual pool totals are:```"
             for x in range(0,repetition):
-                message += (f"\nPool {x}: {result[1][x]+modifier}")
+                message += (f"\nPool {x+1}: {result[1][x]+modifier}")
             message += ("```")
             if len(message) < 2000:
                 await ctx.send(content = message)
