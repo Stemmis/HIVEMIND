@@ -270,11 +270,12 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
             result = await numberGen(repetition, 1, sides, 0)
             for index in result[1]:
                 index += modifier
-            result[0] += (modifier*repetition)
+            total = int(result[0])
+            total += (modifier*repetition)
             if(comment != ""):
-                await ctx.send(content = f"```diff\n+{comment}\n```Rolled **1** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
+                await ctx.send(content = f"```diff\n+{comment}\n```Rolled **1** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{total}**.\n```{result[1]}```")
             else:
-                await ctx.send(content = f"Rolled **1** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{result[0]}**.\n```{result[1]}```")
+                await ctx.send(content = f"Rolled **1** die with **{sides}** sides **{repetition}** times, each with a modifier of **{modifier}**.\nYour result is **{total}**.\n```{result[1]}```")
             message = f"Your individual pool totals are:```"
             for x in range(0,repetition):
                 message += (f"\nPool {x}: {result[1][x]+modifier}")
