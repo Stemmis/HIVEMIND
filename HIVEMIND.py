@@ -919,6 +919,8 @@ async def initorder(ctx, encounterid):
         track = initiative.execute(f"SELECT * FROM CHARACTER WHERE EID = {encounterid} ORDER BY INIT DESC;")
         msgContent = f"**Initiative Order** `{encounterid}`\n```"
         for row in track:
+            if row[1] == current[2]:
+                msgContent = msgContent + f"-↓-↓-↓-This character's turn-↓-↓-↓-\n"
             msgContent = msgContent + f"{row[3]}: {row[1]}, played by {client.get_user(row[2]).name}\n"
         msgContent = msgContent + f"```"
         await ctx.send(content = msgContent)
