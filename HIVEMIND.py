@@ -870,7 +870,7 @@ async def initnext(ctx, encounterid):
     current = initiative.execute(f"SELECT CURRENT FROM ENCOUNTER WHERE EID = {encounterid};")
     current = current.fetchone()
     if current == None:
-        ctx.send(f"Specified encounter does not exist. Please try again!")
+        await ctx.send(f"Specified encounter does not exist. Please try again!")
     else:
         current = current[0]
         track = initiative.execute(f"SELECT * FROM CHARACTER WHERE EID = {encounterid} ORDER BY INIT DESC;")
@@ -914,7 +914,7 @@ async def initorder(ctx, encounterid):
     current = initiative.execute(f"SELECT * FROM ENCOUNTER WHERE EID = {encounterid};")
     current = current.fetchone()
     if current == None:
-        ctx.send(f"Specified encounter does not exist. Please try again!")
+        await ctx.send(f"Specified encounter does not exist. Please try again!")
     else:
         track = initiative.execute(f"SELECT * FROM CHARACTER WHERE EID = {encounterid} ORDER BY INIT DESC;")
         msgContent = f"**Initiative Order** `{encounterid}`\n```"
