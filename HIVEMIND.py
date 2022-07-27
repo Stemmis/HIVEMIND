@@ -15,7 +15,9 @@ from discord_slash.model import ContextMenuType
 
 #Defines
 
-client = discord.Client(intents=discord.Intents.all()) #The bot itself
+intents = discord.Intents.default() #Includes all intents EXCEPT privileged ones. Defined separately here in case I want to disable some intents later.
+
+client = discord.Client(intents=intents) #The bot itself
 slash = SlashCommand(client, sync_commands=True) #Implements slash commands. sync_commands=True means it will sync the programmed commands with discord's developer section, so they do not need to be manually updated.
 
 #Globals
