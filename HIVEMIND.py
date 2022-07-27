@@ -25,6 +25,7 @@ slash = SlashCommand(client, sync_commands=True) #Implements slash commands. syn
 MAX_VALUE = 4294967296
 MAX_DICE = 1000
 
+
 #Initialize Generator
 try:
     GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
@@ -136,7 +137,7 @@ async def help(ctx):
                 description="Roll dice",
                 options = [
                     create_option(
-                        name="pool",
+                        name="pool", 
                         description="Number of dice in your pool",
                         option_type=4,
                         required=True
@@ -168,6 +169,9 @@ async def roll(ctx, pool: int, sides: int, modifier: int = 0, comment:str = ""):
         else:
             await ctx.send(content = "Dice exceed size limit. Maybe you should roll smaller dice.")
         raise ValueError(f"Die has too many sides! {sides}")
+    if pool > MAX_DICE:
+        await ctx.send(content = "Please don't roll so many dice at once.")
+        raise ValueError(f"Too many dice in pool! {pool}")
     if pool == 1:
         try:
             result = await numberGen(1, 1, sides, modifier)
@@ -278,6 +282,9 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
         else:
             await ctx.send(content = "Dice exceed size limit. Maybe you should roll smaller dice.")
         raise ValueError(f"Die has too many sides! {sides}")
+    if pool > MAX_DICE:
+        await ctx.send(content = "Please don't roll so many dice at once.")
+        raise ValueError(f"Too many dice in pool! {pool}")
     if pool == 1:
         try:
             result = await numberGen(repetition, 1, sides, 0)
@@ -375,6 +382,9 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
                 ]
             )
 async def rollshadowrun(ctx, pool:int, limit: int):
+    if pool > MAX_DICE:
+        await ctx.send(content = "Please don't roll so many dice at once.")
+        raise ValueError(f"Too many dice in pool! {pool}")
     ones = 0
     hits = 0
     try:
@@ -457,6 +467,9 @@ async def get_shadowrun(edited_message, ctx):
             )
 async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, modifier:int = 0):
     try:
+        if pool > MAX_DICE:
+            await ctx.send(content = "Please don't roll so many dice at once.")
+            raise ValueError(f"Too many dice in pool! {pool}")
         result = await numberGen(pool, 1, 6, 0)
         if bonus !=0:
             try:
@@ -595,6 +608,9 @@ async def testfunction(ctx: MenuContext):
                 ]
             )
 async def row(ctx, threshold:int = 0, modifier:int = 0):
+    if pool > MAX_DICE:
+        await ctx.send(content = "Please don't roll so many dice at once.")
+        raise ValueError(f"Too many dice in pool! {pool}")
     try:
         result = await numberGen(1, 1, 100, modifier)
         roll = result[1][0]
@@ -780,6 +796,9 @@ async def initroll(ctx, encounterid, charactername, pool, sides, modifier:int = 
         else:
             await ctx.send(content = "Dice exceed size limit. Maybe you should roll smaller dice.")
         raise ValueError(f"Die has too many sides! {sides}")
+    if pool > MAX_DICE:
+        await ctx.send(content = "Please don't roll so many dice at once.")
+        raise ValueError(f"Too many dice in pool! {pool}")
     valid = True
     initiative = sqlite3.connect('init.db')
     cursor = initiative.execute(f"SELECT EID FROM ENCOUNTER WHERE EID = {encounterid};")
@@ -791,7 +810,7 @@ async def initroll(ctx, encounterid, charactername, pool, sides, modifier:int = 
         if UID != None:
             if UID[0] != ctx.author_id:
                 await ctx.send(content = f"Someone else already rolled initiative for this character.", hidden = True)
-                valid = False
+                valid = False  
         if valid == True:
             initiative.execute(f"DELETE FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
             initVal = await numberGen(pool, 1, sides, modifier)
