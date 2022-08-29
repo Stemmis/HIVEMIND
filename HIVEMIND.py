@@ -6,19 +6,14 @@ import traceback
 import threading
 import numexpr
 import sqlite3
+import interactions
 from sourcerandom import OnlineRandomnessSource
-from discord_slash import SlashCommand, SlashCommandOptionType
-from discord_slash.utils.manage_commands import create_option
-from discord_slash.utils.manage_components import create_select, create_select_option, create_actionrow, wait_for_component
-from discord_slash.context import MenuContext, ComponentContext
-from discord_slash.model import ContextMenuType
 
 #Defines
 
 intents = discord.Intents.default() #Includes all intents EXCEPT privileged ones. Defined separately here in case I want to disable some intents later.
 
-client = discord.Client(intents=intents) #The bot itself
-slash = SlashCommand(client, sync_commands=True) #Implements slash commands. sync_commands=True means it will sync the programmed commands with discord's developer section, so they do not need to be manually updated.
+client = interactions.Client(str(sys.argv[1])) #The bot itself
 
 #Globals
 
@@ -48,7 +43,7 @@ initiative.close()
 #Begin, initialize bot.
 @client.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print('We have logged in as HIVEMIND')
     
     
 #Set prefix
@@ -97,7 +92,7 @@ async def parse_command(message, channel):
 #Help command - Necessary now that alternative syntax is an option
 
 
-@slash.slash(name="help",
+@client.command(name="help",
                 description="Get a list of commands, uses, and syntax"
                 )
 async def help(ctx):
@@ -120,44 +115,34 @@ async def help(ctx):
 
 
 
-#async def helpMessages(ctx, selected_options)
-#    if(selected_options[0] = '?roll':
-        
-    
-#@client.event
-#async def on_component(ctx: ComponentContext):
-#    await ctx.edit_origin(content=ctx.selected_options[0])
-
-
-
 #The default dice rolling function. 
 #This function includes two options: The number of dice to be rolled (pool) and the number of sides on each die (sides).
 #This function also includes an optional modifier, to add or subtract to the function.
-@slash.slash(name="roll", 
+@client.command(name="roll", 
                 description="Roll dice",
                 options = [
-                    create_option(
+                    interactions.Option(
                         name="pool", 
                         description="Number of dice in your pool",
-                        option_type=4,
+                        type=4,
                         required=True
                     ),
-                    create_option(
+                    interactions.Option(
                         name="sides",
                         description="Number of sides on each die",
-                        option_type=4,
+                        type=4,
                         required=True
                     ),
-                    create_option(
+                    interactions.Option(
                         name="modifier",
                         description="Modifier to roll",
-                        option_type=4,
+                        type=4,
                         required=False
                     ),
-                    create_option(
+                    interactions.Option(
                         name="comment",
                         description="Optional comment - say what the roll is for",
-                        option_type=3,
+                        type=3,
                         required=False
                     )
                 ]
@@ -240,37 +225,37 @@ async def get_roll(edited_message, channel):
     
 
 
-@slash.slash(name="repeatroll", 
+@client.command(name="repeatroll", 
                 description="Roll the same dice repeatedly.",
                 options = [
-                    create_option(
+                    interactions.Option(
                         name="pool",
                         description="Number of dice in your pool",
-                        option_type=4,
+                        type=4,
                         required=True
                     ),
-                    create_option(
+                    interactions.Option(
                         name="sides",
                         description="Number of sides on each die",
-                        option_type=4,
+                        type=4,
                         required=True
                     ),
-                    create_option(
+                    interactions.Option(
                         name="repetition",
                         description="How many times you'd like to roll",
-                        option_type=4,
+                        type=4,
                         required=True
                     ),
-                    create_option(
+                    interactions.Option(
                         name="modifier",
                         description="Modifier to roll",
-                        option_type=4,
+                        type=4,
                         required=False
                     ),
-                    create_option(
+                    interactions.Option(
                         name="comment",
                         description="Optional comment - say what the roll is for",
-                        option_type=3,
+                        type=3,
                         required=False
                     )
                 ]
@@ -364,19 +349,19 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
 #Roll dice for the Shadowrun system.
 #Roll a pool of d6's, with each 5 or 6 being a "hit".
 #You cannot exceed your limit on hits; also, if half of your rolls were ones, you GLITCH. If you got no rolls and glitch, you CRITICAL GLITCH.
-@slash.slash(name="rollshadowrun",
+@client.command(name="rollshadowrun",
                 description="Roll dice for the Shadowrun system",
                 options = [
-                    create_option(
+                    interactions.Option(
                         name="pool",
                         description="Number of dice in your pool",
-                        option_type=4,
+                        type=4,
                         required=True
                     ),
-                    create_option(
+                    interactions.Option(
                         name="limit",
                         description="Limit for your roll",
-                        option_type=4,
+                        type=4,
                         required=True
                     )
                 ]
@@ -436,31 +421,31 @@ async def get_shadowrun(edited_message, ctx):
 #Roll dice for the Sword Chronicle system.
 #Roll a pool of d6's, and add them together. You must beat a given threshold.
 #Additionally, you have a set of bonus dice you could add OPTIONALLY.
-@slash.slash(name="rollswordchronicle",
+@client.command(name="rollswordchronicle",
                 description = "Roll dice for the Sword Chronicle system",
                 options = [
-                    create_option(
+                    interactions.Option(
                         name = "pool",
                         description = "Number of dice in your pool",
-                        option_type = 4,
+                        type = 4,
                         required = True
                     ),
-                    create_option(
+                    interactions.Option(
                         name = "bonus",
                         description = "Number of bonus dice to add",
-                        option_type = 4,
+                        type = 4,
                         required = False
                     ),
-                    create_option(
+                    interactions.Option(
                         name = "difficulty",
                         description = "Threshold you're trying to beat - for Degrees of Success/Failure",
-                        option_type = 4,
+                        type = 4,
                         required = False
                     ),
-                    create_option(
+                    interactions.Option(
                         name = "modifier",
                         description = "Modifier to add to your roll",
-                        option_type = 4,
+                        type = 4,
                         required = False
                     )
                 ]
@@ -579,9 +564,11 @@ async def get_swordchronicle(edited_message, ctx):
         print(traceback.format_exc())
 
 #Random test command, please ignore. Testing menus functions.
-@slash.context_menu(target=ContextMenuType.MESSAGE,
-                    name="testfunction")
-async def testfunction(ctx: MenuContext):
+@client.command(
+    type = interactions.ApplicationCommandType.USER,
+    name = "testFunction"
+)
+async def testfunction(ctx):
     await ctx.send(
         content =f"Responded! The content of the message targeted: {ctx.target_message.content}",
         hidden=True
@@ -590,19 +577,19 @@ async def testfunction(ctx: MenuContext):
 
 #Roll dice for the Warhammer 40k percentile dice systems.
 #Roll a d100. Optionally include a number you're trying to beat for degrees of success/failure, or modifiers.
-@slash.slash(name="row",
+@client.command(name="row",
                 description = "Roll dice for percentile dice systems, such as the Warhammer 40k family",
                 options = [
-                    create_option(
+                    interactions.Option(
                         name = "threshold",
                         description = "The number you are trying to beat",
-                        option_type = 4,
+                        type = 4,
                         required = False
                     ),
-                    create_option(
+                    interactions.Option(
                         name = "modifier",
                         description = "Modifier to add to your roll",
-                        option_type = 4,
+                        type = 4,
                         required = False
                     )
                 ]
@@ -687,17 +674,22 @@ async def get_row(edited_message, ctx):
 #Create an initiative encounter within the initiative database
 #Adds a new entry to the initiative database
 #Says the encounter ID in chat
-@slash.slash(name="initstart",
+@client.command(name = "init")
+async def init(ctx: interactions.CommandContext):
+    "Initiative family of commands"
+    pass
+@init.subcommand(name="start",
                 description = "Start a new initiative encounter.",
-            )
-async def initstart(ctx):
+)
+async def start(ctx):
     initiative = sqlite3.connect('init.db')
     cursor = initiative.execute("SELECT MAX (EID) FROM ENCOUNTER;")
     highestID = cursor.fetchone()[0]
     if highestID == None:
         highestID = 0
     ID = highestID + 1
-    initiative.execute(f"INSERT INTO ENCOUNTER VALUES ({ID}, {ctx.author_id}, 'Undefined');")
+    print(ctx.member.id)
+    initiative.execute(f"INSERT INTO ENCOUNTER VALUES ({ID}, {ctx.member.id}, 'Undefined');")
     await ctx.send(f"Your encounter ID is {ID}.\nRoll initiative!")
     initiative.commit()
     initiative.close()
@@ -705,13 +697,13 @@ async def initstart(ctx):
 #Remove an initiative encounter from the initiative database
 #Removes an entry from the initiative database based on supplied ID
 #Says the encounter ID in chat
-@slash.slash(name="initend",
+@init.subcommand(name="end",
                 description = "End an old initiative encounter.", 
                 options = [
-                    create_option(
+                    interactions.Option(
                         name = "encounterid",
                         description = "The ID of your encounter",
-                        option_type = 4,
+                        type = 4,
                         required = True
                     )
                 ]
@@ -720,20 +712,21 @@ async def initend(ctx, encounterid):
     initiative = sqlite3.connect('init.db')
     cursor = initiative.execute(f"SELECT MASTER FROM ENCOUNTER WHERE EID = {encounterid};")
     masterID = cursor.fetchone()[0]
-    if ctx.author_id == masterID:
+    if (ctx.member.id) == masterID:
         initiative.execute(f"DELETE FROM ENCOUNTER WHERE EID = {encounterid};")
         initiative.execute(f"DELETE FROM CHARACTER WHERE EID = {encounterid};")
         await ctx.send(f"Encounter over.")
     else:
+        owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=masterID)
         await ctx.send(
-        content =f"Only the master of an initiative encounter can end it. Ask {client.get_user(masterID).name}!",
-        hidden=True
+        content =f"Only the master of an initiative encounter can end it. Ask {owner.user}!",
+        ephemeral=True
     )
     initiative.commit()
     initiative.close()
-    
+
 #Print all EIDs into console
-@slash.slash(name="initview",
+@init.subcommand(name="view",
                 description = "Debug command. Prints all initiative information into console."
             )
 async def initview(ctx):
@@ -746,45 +739,45 @@ async def initview(ctx):
         print(f"EID: {row[0]}; Character Name: {row[1]}; Player ID: {row[2]}; Initiative: {row[3]}")
     await ctx.send(
         content =f"This is a debug command.",
-        hidden=True
+        ephemeral=True
     )
     initiative.commit()
     initiative.close()
-    
+
 #Remove an initiative encounter from the initiative database
 #Removes an entry from the initiative database based on supplied ID
 #Says the encounter ID in chat
-@slash.slash(name="initroll",
+@init.subcommand(name="roll",
                 description = "Roll initiative.",
                 options = [
-                    create_option(
+                    interactions.Option(
                         name = "encounterid",
                         description = "The ID of your encounter",
-                        option_type = 3,
+                        type = 3,
                         required = True
                     ),
-                    create_option(
+                    interactions.Option(
                         name = "charactername",
                         description = "Your character's name",
-                        option_type = 3,
+                        type = 3,
                         required = True
                     ),
-                    create_option(
+                    interactions.Option(
                         name="pool",
                         description="Number of dice in your pool",
-                        option_type=4,
+                        type=4,
                         required=True
                     ),
-                    create_option(
+                    interactions.Option(
                         name="sides",
                         description="Number of sides on each die",
-                        option_type=4,
+                        type=4,
                         required=True
                     ),
-                    create_option(
+                    interactions.Option(
                         name="modifier",
                         description="Modifier to roll",
-                        option_type=4,
+                        type=4,
                         required=False
                     )
                 ]
@@ -803,19 +796,19 @@ async def initroll(ctx, encounterid, charactername, pool, sides, modifier:int = 
     initiative = sqlite3.connect('init.db')
     cursor = initiative.execute(f"SELECT EID FROM ENCOUNTER WHERE EID = {encounterid};")
     if cursor.fetchone() == None:
-        await ctx.send(content = f"Specified an invalid Encounter ID. Please try again.", hidden = True)
+        await ctx.send(content = f"Specified an invalid Encounter ID. Please try again.", ephemeral = True)
     else:
         cursor = initiative.execute(f"SELECT USERID FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
         UID = cursor.fetchone()
         if UID != None:
-            if UID[0] != ctx.author_id:
-                await ctx.send(content = f"Someone else already rolled initiative for this character.", hidden = True)
+            if UID[0] != ctx.member.id:
+                await ctx.send(content = f"Someone else already rolled initiative for this character.", ephemeral = True)
                 valid = False  
         if valid == True:
             initiative.execute(f"DELETE FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
             initVal = await numberGen(pool, 1, sides, modifier)
             initVal = initVal[0]
-            initiative.execute(f"INSERT INTO CHARACTER VALUES ({encounterid},'{charactername}',{ctx.author_id},{initVal});")
+            initiative.execute(f"INSERT INTO CHARACTER VALUES ({encounterid},'{charactername}',{ctx.member.id},{initVal});")
             await ctx.send(f"{charactername}'s initiative is **{initVal}**.")
             cursor = initiative.execute(f"SELECT MAX(INIT) FROM CHARACTER WHERE EID = {encounterid};")
             highest = cursor.fetchone()[0]
@@ -831,25 +824,25 @@ async def initroll(ctx, encounterid, charactername, pool, sides, modifier:int = 
 #Remove an initiative encounter from the initiative database
 #Removes an entry from the initiative database based on supplied ID
 #Says the encounter ID in chat
-@slash.slash(name="initset",
+@init.subcommand(name="set",
                 description = "Set a character's initiative value.", 
                 options = [
-                    create_option(
+                    interactions.Option(
                         name = "encounterid",
                         description = "The ID of your encounter",
-                        option_type = 4,
+                        type = 4,
                         required = True
                     ),
-                    create_option(
+                    interactions.Option(
                         name = "charactername",
                         description = "The name of your character",
-                        option_type = 3,
+                        type = 3,
                         required = True
                     ),
-                    create_option(
+                    interactions.Option(
                         name = "newinit",
                         description = "Your new initiative value",
-                        option_type = 4,
+                        type = 4,
                         required = True
                     )
                 ]
@@ -865,23 +858,23 @@ async def initset(ctx, encounterid, charactername, newinit):
             await ctx.send(content = f"Specified an invalid character name for the specified encounter. Please try again.", hidden = True)
         else:
             cursor = initiative.execute(f"SELECT USERID FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
-            if ctx.author_id != cursor.fetchone()[0]:
+            if ctx.member.id != cursor.fetchone()[0]:
                 await ctx.send(content = f"You may only modify your own characters' initiative values.", hidden = True)
             else:
                 initiative.execute(f"UPDATE CHARACTER SET INIT = {newinit} WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
                 initiative.commit()
                 await ctx.send(f"{charactername}'s initiative is now **{newinit}**.")
     initiative.close()
-    
+
 #Moves the initiative tracker up by 1
 
-@slash.slash(name="initnext",
+@init.subcommand(name="next",
                 description = "Move the initiative tracker up by one.", 
                 options = [
-                    create_option(
+                    interactions.Option(
                         name = "encounterid",
                         description = "The ID of your encounter",
-                        option_type = 4,
+                        type = 4,
                         required = True
                     )
                 ]
@@ -908,24 +901,24 @@ async def initnext(ctx, encounterid):
             currTrack = track.fetchone()
         else:
             currTrack = track.fetchone()
+        owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=currTrack[2])
         if currTrack != None:
-            await ctx.send(f"It is {client.get_user(currTrack[2]).mention}'s turn as {currTrack[1]}.")
+            await ctx.send(f"It is {owner.mention}'s turn as {currTrack[1]}.")
             initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{currTrack[1]}' WHERE EID = {encounterid};")
         else:
-            await ctx.send(f"It is {client.get_user(top[2]).mention}'s turn as {topName}.")
+            await ctx.send(f"It is {owner.mention}'s turn as {topName}.")
             initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{top[1]}' WHERE EID = {encounterid};")
         initiative.commit()
     initiative.close()
             
 #Moves the initiative tracker up by 1
-
-@slash.slash(name="initorder",
+@init.subcommand(name="order",
                 description = "View an encounter's initiative order.", 
                 options = [
-                    create_option(
+                    interactions.Option(
                         name = "encounterid",
                         description = "The ID of your encounter",
-                        option_type = 4,
+                        type = 4,
                         required = True
                     )
                 ]
@@ -942,11 +935,12 @@ async def initorder(ctx, encounterid):
         for row in track:
             if row[1] == current[2]:
                 msgContent = msgContent + f"-↓-↓-↓-This character's turn-↓-↓-↓-\n"
-            msgContent = msgContent + f"{row[3]}: {row[1]}, played by {client.get_user(row[2]).name}\n"
+            owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=row[2])
+            msgContent = msgContent + f"{row[3]}: {row[1]}, played by {owner.name}\n"
         msgContent = msgContent + f"```"
         await ctx.send(content = msgContent)
     initiative.close()
-        
+     
 
 #The rolling itself! This function generates random numbers. 
 #Count is the quantity of numbers.
@@ -975,4 +969,4 @@ async def numberGen(count, min, max, mod):
     del rollList[0];
     return result, rollList
 
-client.run(str(sys.argv[1])) #Use token as argument when running script from console.
+client.start() #Use token as argument when running script from console.
