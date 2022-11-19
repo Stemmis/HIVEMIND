@@ -3,7 +3,7 @@ import random
 import sourcerandom
 import sys
 import traceback
-import numexpr
+#import numexpr
 import sqlite3
 import interactions
 from sourcerandom import OnlineRandomnessSource
@@ -46,55 +46,55 @@ async def on_ready():
     
     
 #Set prefix
-@client.event
-async def on_message(message):
-    try:
-        if message.content.startswith('?'):
-            await parse_command(message.content[1:len(message.content)], message.channel)
-    except:
-        print(traceback.format_exc())
-        print("Something went wrong! Please try again.")
+#@client.event
+#async def on_message(message):
+#    try:
+#        if message.content.startswith('?'):
+#            await parse_command(message.content[1:len(message.content)], message.channel)
+#    except:
+#        print(traceback.format_exc())
+#        print("Something went wrong! Please try again.")
         
 #Handle ? commands
-@client.event
-async def parse_command(message, channel):
-    try:
-        if message.startswith('roll '):
-            if message.strip() == 'roll':
-                print('Specified an invalid dice expression.')
-            else:
-                await get_roll(message[5:len(message)], channel)
-        elif message.startswith('help'):
-            help(channel)
-        elif message.startswith('roll-sr '):
-            if message.strip() == 'roll-sr':
-                print('Specified an invalid dice expression.')
-            else:
-                await get_shadowrun(message[8:len(message)], channel)
-        elif message.startswith('roll-sc '):
-            if message.strip() == 'roll-sc':
-                print('Specified an invalid dice expression.')
-            else:
-                await get_swordchronicle(message[8:len(message)], channel)
-        elif message.startswith('row'):
-            if message.strip() == 'row':
-                await get_row(None, channel)
-            else:
-                await get_row(message[4:len(message)], channel)
-        else:
-            print('Not a command')
-    except:
-        print(traceback.format_exc())
-        print("Something went wrong with the command! Please try again.")
-        await channel.send("You specified an invalid command! Please try again.")
+#@client.event
+#async def parse_command(message, channel):
+#    try:
+#        if message.startswith('roll '):
+#            if message.strip() == 'roll':
+#                print('Specified an invalid dice expression.')
+#            else:
+#                await get_roll(message[5:len(message)], channel)
+#        elif message.startswith('help'):
+#            help(channel)
+#        elif message.startswith('roll-sr '):
+#            if message.strip() == 'roll-sr':
+#                print('Specified an invalid dice expression.')
+#            else:
+#                await get_shadowrun(message[8:len(message)], channel)
+#        elif message.startswith('roll-sc '):
+#            if message.strip() == 'roll-sc':
+#                print('Specified an invalid dice expression.')
+#            else:
+#                await get_swordchronicle(message[8:len(message)], channel)
+#        elif message.startswith('row'):
+#            if message.strip() == 'row':
+#                await get_row(None, channel)
+#            else:
+#                await get_row(message[4:len(message)], channel)
+#        else:
+#            print('Not a command')
+#    except:
+#        print(traceback.format_exc())
+#        print("Something went wrong with the command! Please try again.")
+#        await channel.send("You specified an invalid command! Please try again.")
         
-#Help command - Necessary now that alternative syntax is an option
+#Help command - Unnecessary now that alternative syntax is no longer an option
 
 
-@client.command(name="help",
-                description="Get a list of commands, uses, and syntax"
-                )
-async def help(ctx):
+#@client.command(name="help",
+#                description="Get a list of commands, uses, and syntax"
+#                )
+#async def help(ctx):
 #    helpmenu = create_select(
 #        options = [
 #            create_select_option("?roll", value="roll"),
@@ -110,7 +110,7 @@ async def help(ctx):
 #        await ctx.edit_origin(content=ctx.selected_options[0])
 #    except:
 #        print(traceback.format_exc())
-    await ctx.send(">>> ***HIVEMIND Commands***\n\n**Roll**\n*Description*\nThe default roll command. Rolls a user-specified number of dice with a user-specified number of sides, and adds an optional modifier.\n*Syntax*\n?roll [Number of Dice]d[Number of Sides] (+ or - [Modifier])\ne.g. ?roll 4d8+10\n\n**Roll-SR**\n*Description*\nRoll command for the Shadowrun tabletop roleplaying game. Rolls a user-specified number of d6's and counts hits, up to a user-specified limit.\n*Syntax*\n?roll-sr [Number of Dice]d[Limit]\ne.g. ?roll-sr 12d9\n\n**Roll-SC**\n*Description*\nRoll command for the Sword Chronicle tabletop roleplaying game. Rolls a user-specified number of d6's and adds them. Allows for optional bonus dice, modifiers, or difficulty.\n*Syntax*\n?roll-sc [Number of Dice]d([Number of Bonus]b[Difficulty of Test]d(+ or - [Modifier]))\ne.g. ?roll 5d2b9d+3\n\n**Roll-Warhammer**\n*Description*\nRolls a percentile dice, as used in the Warhammer 40k family of tabletop roleplaying games. Allows for an optional threshold to beat for determining degrees of success or failure, and adds an optional modifier.\n*Syntax*\n?row ([Threshold]v[Modifier])\ne.g. ?row 45v-30")
+#    await ctx.send(">>> ***HIVEMIND Commands***\n\n**Roll**\n*Description*\nThe default roll command. Rolls a user-specified number of dice with a user-specified number of sides, and adds an optional modifier.\n*Syntax*\n?roll [Number of Dice]d[Number of Sides] (+ or - [Modifier])\ne.g. ?roll 4d8+10\n\n**Roll-SR**\n*Description*\nRoll command for the Shadowrun tabletop roleplaying game. Rolls a user-specified number of d6's and counts hits, up to a user-specified limit.\n*Syntax*\n?roll-sr [Number of Dice]d[Limit]\ne.g. ?roll-sr 12d9\n\n**Roll-SC**\n*Description*\nRoll command for the Sword Chronicle tabletop roleplaying game. Rolls a user-specified number of d6's and adds them. Allows for optional bonus dice, modifiers, or difficulty.\n*Syntax*\n?roll-sc [Number of Dice]d([Number of Bonus]b[Difficulty of Test]d(+ or - [Modifier]))\ne.g. ?roll 5d2b9d+3\n\n**Roll-Warhammer**\n*Description*\nRolls a percentile dice, as used in the Warhammer 40k family of tabletop roleplaying games. Allows for an optional threshold to beat for determining degrees of success or failure, and adds an optional modifier.\n*Syntax*\n?row ([Threshold]v[Modifier])\ne.g. ?row 45v-30")
 
 
 
@@ -182,45 +182,45 @@ async def roll(ctx, pool: int, sides: int, modifier: int = 0, comment:str = ""):
             await ctx.send(content = message)
 
 #Regular ? implementation of above
-async def get_roll(edited_message, channel):
-    pool,size = edited_message.split("d")
-    pool = int(pool)
-    add = size.find('+')
-    sub = size.find('-')
-    if (sub != -1 and add == -1):
-        mod = size.split("-",1)
-        size = mod[0]
-        mod = mod[1]
-        if (mod.find("-") != -1):
-            mod = "-" + mod
-            numexpr.evaluate(mod)
-        else:
-            mod = "-" + mod
-            mod = int(mod)
-    elif (sub == -1 and add != -1):
-        mod = size.split("+",1)
-        size = mod[0]
-        mod = mod[1]
-        if (mod.find("+") != -1):
-            mod = numexpr.evaluate(mod)
-        mod = int(mod)
-    elif (sub < add and sub > -1 and add > -1): #if subtraction comes first
-        mod = size.split("-",1)
-        size = mod[0]
-        mod = "-" + mod[1]
-        mod = numexpr.evaluate(mod)
-    elif (add < sub and add > -1 and sub >-1): #if addition comes first
-        mod = size.split("+",1)
-        size = mod[0]
-        mod = numexpr.evaluate(mod[1])
-    else:
-        mod = 0
-    size = int(size)
-    result = await numberGen(pool, 1, size, mod)
-    message = f"Rolled **{pool}** dice with **{size}** sides, with a modifier of **{mod}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
-    if len(message) > 2000:
-        message = f"Rolled **{pool}** dice with **{size}** sides, with a modifier of **{mod}**.\nYour total is **{result[0]}**."
-    await channel.send(content = message)
+#async def get_roll(edited_message, channel):
+#    pool,size = edited_message.split("d")
+#    pool = int(pool)
+#    add = size.find('+')
+#    sub = size.find('-')
+#    if (sub != -1 and add == -1):
+#        mod = size.split("-",1)
+#        size = mod[0]
+#        mod = mod[1]
+#        if (mod.find("-") != -1):
+#            mod = "-" + mod
+#            numexpr.evaluate(mod)
+#        else:
+#            mod = "-" + mod
+#            mod = int(mod)
+#    elif (sub == -1 and add != -1):
+#        mod = size.split("+",1)
+ #       size = mod[0]
+#        mod = mod[1]
+#        if (mod.find("+") != -1):
+#            mod = numexpr.evaluate(mod)
+#        mod = int(mod)
+#    elif (sub < add and sub > -1 and add > -1): #if subtraction comes first
+#        mod = size.split("-",1)
+#        size = mod[0]
+#        mod = "-" + mod[1]
+#        mod = numexpr.evaluate(mod)
+#    elif (add < sub and add > -1 and sub >-1): #if addition comes first
+#        mod = size.split("+",1)
+#        size = mod[0]
+ #       mod = numexpr.evaluate(mod[1])
+#    else:
+ #       mod = 0
+#    size = int(size)
+#    result = await numberGen(pool, 1, size, mod)
+#    message = f"Rolled **{pool}** dice with **{size}** sides, with a modifier of **{mod}**.\nYour result is **{result[0]}**.\n```{result[1]}```"
+#    if len(message) > 2000:
+##        message = f"Rolled **{pool}** dice with **{size}** sides, with a modifier of **{mod}**.\nYour total is **{result[0]}**."
+#    await channel.send(content = message)
     
 
 
@@ -390,29 +390,29 @@ async def rollshadowrun(ctx, pool:int, limit: int):
         print(traceback.format_exc())
         
 #Shadowrun non-slash workaround
-async def get_shadowrun(edited_message, ctx):
-    pool,limit = edited_message.split("d")
-    pool = int(pool)
-    limit = int(limit)
-    ones = 0
-    hits = 0
-    try: 
-        result = await numberGen(pool, 1, 6, 0)
-        result = result[1]
-        for val in result:
-            if val == 1:
-                ones += 1
-            if val >= 5:
-                hits += 1
-        if ones >= pool/2:
-            if hits == 0:
-                await ctx.send(f"**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
-            else:
-                await ctx.send(f"Rolled **{min(hits,limit)}** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
-        else:
-            await ctx.send(f"Rolled **{min(hits,limit)}** hits. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
-    except:
-        print(traceback.format_exc())
+#async def get_shadowrun(edited_message, ctx):
+#    pool,limit = edited_message.split("d")
+#    pool = int(pool)
+#    limit = int(limit)
+#    ones = 0
+#    hits = 0
+#    try: 
+#        result = await numberGen(pool, 1, 6, 0)
+#        result = result[1]
+#        for val in result:
+#            if val == 1:
+#                ones += 1
+ #           if val >= 5:
+#                hits += 1
+#        if ones >= pool/2:
+#            if hits == 0:
+#                await ctx.send(f"**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+#            else:
+#                await ctx.send(f"Rolled **{min(hits,limit)}** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+ #       else:
+ #           await ctx.send(f"Rolled **{min(hits,limit)}** hits. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+#    except:
+#        print(traceback.format_exc())
 
 
 
@@ -497,81 +497,81 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
 
 
 #Sword Chronicle non-slash workaround
-async def get_swordchronicle(edited_message, ctx):
-    if edited_message.find("d") != edited_message.rfind("d"):
-        pool,otherBit,mod = edited_message.split("d")
-        hasDif = True
-    else:
-        pool,otherBit = edited_message.split("d")
-        hasDif = False
-    pool = int(pool)
-    modifier = 0
-    bonus = 0
-    difficulty = 0
-    if otherBit!=None:
-        if otherBit.find("b") != -1:
-            bonus,otherBit = otherBit.split("b")
-            bonus = int(bonus)
-        if (otherBit.find("+") != -1) or (otherBit.find("-") != -1):
-            modifier = "0"+otherBit
-            modifier = numexpr.evaluate(modifier)
-        if hasDif:
-            difficulty = int(otherBit)
-    if hasDif:
-        modifier = "0"+mod
-        modifier = numexpr.evaluate(modifier)
-    try: 
-        result = await numberGen(pool, 1, 6, 0)
-        if bonus!=0:
-            try:
-                bonusList = await numberGen(bonus, 1, 6, 0)
-                bonusList = bonusList[1]
-                workList = result[1]
-                workList.extend(bonusList)
-                workList.sort()
-                bonusList = workList[0:bonus]
-                workList = workList[bonus:]
-                sumTotal = sum(workList) + modifier
-                if (difficulty > 0 and difficulty < sumTotal):
-                    DoS = (sumTotal-difficulty)//5 + 1
-                    if DoS >= 4:
-                        DoS = 4
-                    await ctx.send(f"Rolled a total of **{sumTotal}** for **{DoS}** Degrees of Success.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
-                elif (difficulty > 0 and difficulty > sumTotal):
-                    DoF = (difficulty - sumTotal)//5 + 1
-                    if DoF >= 2:
-                        DoF = 2
-                    await ctx.send(f"Rolled a total of **{sumTotal}** for **{DoF}** Degrees of Failure.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
-                else:
-                    await ctx.send(f"Rolled a total of **{sumTotal}**.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
-            except:
-                print(traceback.format_exc())
-        else:
-            if (difficulty > 0 and difficulty < result[0]):
-                DoS = (result[0]-difficulty)//5 + 1
-                if DoS >= 4:
-                    DoS = 4
-                await ctx.send(f"Rolled a total of **{result[0]}** for **{DoS}** Degrees of Success.\n```{result[1]} + {modifier}```")
-            elif (difficulty > 0 and difficulty > result[0]):
-                DoF = (difficulty - result[0])//5 + 1
-                if DoF >= 2:
-                    DoF = 2
-                await ctx.send(f"Rolled a total of **{result[0]}** for **{DoF}** Degrees of Failure.\n```{result[1]} + {modifier}```")
-            else:
-                await ctx.send(f"Rolled a total of **{result[0]}**.\n```{result[1]} + {modifier}```")
-    except:
-        print(traceback.format_exc())
+#async def get_swordchronicle(edited_message, ctx):
+#    if edited_message.find("d") != edited_message.rfind("d"):#
+#        pool,otherBit,mod = edited_message.split("d")#
+#        hasDif = True
+#    else:
+#        pool,otherBit = edited_message.split("d")
+ #       hasDif = False
+#    pool = int(pool)
+#    modifier = 0
+#    bonus = 0
+#    difficulty = 0#
+#    if otherBit!=None:
+#        if otherBit.find("b") != -1:
+#            bonus,otherBit = otherBit.split("b")
+#            bonus = int(bonus)
+#        if (otherBit.find("+") != -1) or (otherBit.find("-") != -1):
+#            modifier = "0"+otherBit
+#            modifier = numexpr.evaluate(modifier)
+#        if hasDif:
+#            difficulty = int(otherBit)
+ #   if hasDif:
+#        modifier = "0"+mod
+#        modifier = numexpr.evaluate(modifier)
+#    try: 
+#        result = await numberGen(pool, 1, 6, 0)
+#        if bonus!=0:
+#            try:
+#                bonusList = await numberGen(bonus, 1, 6, 0)
+#                bonusList = bonusList[1]
+#                workList = result[1]
+#                workList.extend(bonusList)
+#                workList.sort()
+#                bonusList = workList[0:bonus]
+#                workList = workList[bonus:]
+#                sumTotal = sum(workList) + modifier
+#                if (difficulty > 0 and difficulty < sumTotal):
+#                    DoS = (sumTotal-difficulty)//5 + 1
+#                    if DoS >= 4:
+#                        DoS = 4
+#                    await ctx.send(f"Rolled a total of **{sumTotal}** for **{DoS}** Degrees of Success.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
+#                elif (difficulty > 0 and difficulty > sumTotal):
+#                    DoF = (difficulty - sumTotal)//5 + 1
+#                    if DoF >= 2:
+#                        DoF = 2
+#                    await ctx.send(f"Rolled a total of **{sumTotal}** for **{DoF}** Degrees of Failure.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
+#                else:
+#                    await ctx.send(f"Rolled a total of **{sumTotal}**.\n```{workList} + {modifier}```Discarded:\n```{bonusList}```")
+ #           except:
+#                print(traceback.format_exc())
+#        else:
+#            if (difficulty > 0 and difficulty < result[0]):
+#                DoS = (result[0]-difficulty)//5 + 1
+#                if DoS >= 4:
+#                    DoS = 4
+#                await ctx.send(f"Rolled a total of **{result[0]}** for **{DoS}** Degrees of Success.\n```{result[1]} + {modifier}```")
+#            elif (difficulty > 0 and difficulty > result[0]):
+ #               DoF = (difficulty - result[0])//5 + 1
+ #               if DoF >= 2:
+ #                   DoF = 2
+ #               await ctx.send(f"Rolled a total of **{result[0]}** for **{DoF}** Degrees of Failure.\n```{result[1]} + {modifier}```")
+#            else:
+#                await ctx.send(f"Rolled a total of **{result[0]}**.\n```{result[1]} + {modifier}```")
+#    except:
+#        print(traceback.format_exc())
 
 #Random test command, please ignore. Testing menus functions.
-@client.command(
-    type = interactions.ApplicationCommandType.USER,
-    name = "testFunction"
-)
-async def testfunction(ctx):
-    await ctx.send(
-        content =f"Responded! The content of the message targeted: {ctx.target_message.content}",
-        hidden=True
-    )
+#@client.command(
+#    type = interactions.ApplicationCommandType.USER,
+#    name = "testFunction"
+#)
+#async def testfunction(ctx):
+#    await ctx.send(
+#        content =f"Responded! The content of the message targeted: {ctx.target_message.content}",
+#        hidden=True
+#    )
     
 
 #Roll dice for the Warhammer 40k percentile dice systems.
@@ -624,50 +624,50 @@ async def row(ctx, threshold:int = 0, modifier:int = 0):
         print(traceback.format_exc())
         
 #Row non-slash workaround
-async def get_row(edited_message, ctx):
-    if edited_message == None:
-        try:
-            result = await numberGen(1, 1, 100, 0)
-            result = result[0]
-            await ctx.send(f"Rolled a **{result}**.")
-        except:
-            print(traceback.format_exc())
-    else:
-        modifier = 0
-        threshold = None
-        if edited_message.find("v") != -1:
-            threshold,modifier = edited_message.split("v")
-            threshold = int(threshold)
-            modifier = "0" + modifier
-            modifier = numexpr.evaluate(modifier)
-            try:
-                result = await numberGen(1, 1, 100, modifier)
-                roll = result[1][0]
-                result = result[0]
-                DoS = (result-threshold)//10 + 1
-                if modifier != 0:
-                    if result <= threshold:
-                        DoS = -DoS
-                        await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}** vs **{threshold}**.\n**Succeeded** with **{DoS}** Degrees of Success!")
-                    if result > threshold:
-                        await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}** vs **{threshold}**.\n**Failed** with **{DoS}** Degrees of Failure!")
-                else:
-                    if result <= threshold:
-                        DoS = -DoS
-                        await ctx.send(f"Rolled a **{result}** vs **{threshold}**.\n**Succeeded** with **{DoS}** Degrees of Success!")
-                    if result > threshold:
-                        await ctx.send(f"Rolled a **{result}** vs **{threshold}**.\n**Failed** with **{DoS}** Degrees of Failure!")
-            except:
-                print(traceback.format_exc())
-        else:
-            modifier = numexpr.evaluate(modifier)
-            try:
-                result = await numberGen(1, 1, 100, modifier)
-                roll = result[1][0]
-                result = result[0]
-                await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}**.")
-            except:
-                print(traceback.format_exc())
+#async def get_row(edited_message, ctx):
+#    if edited_message == None:
+#        try:
+#            result = await numberGen(1, 1, 100, 0)
+#            result = result[0]
+#            await ctx.send(f"Rolled a **{result}**.")
+#        except:
+#            print(traceback.format_exc())
+#    else:
+#        modifier = 0
+#        threshold = None
+#        if edited_message.find("v") != -1:
+#            threshold,modifier = edited_message.split("v")
+#            threshold = int(threshold)
+#            modifier = "0" + modifier
+#            modifier = numexpr.evaluate(modifier)
+#            try:
+#                result = await numberGen(1, 1, 100, modifier)
+#                roll = result[1][0]
+#                result = result[0]
+#                DoS = (result-threshold)//10 + 1
+#                if modifier != 0:
+#                    if result <= threshold:
+#                        DoS = -DoS
+#                        await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}** vs **{threshold}**.\n**Succeeded** with **{DoS}** Degrees of Success!")
+#                    if result > threshold:
+#                        await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}** vs **{threshold}**.\n**Failed** with **{DoS}** Degrees of Failure!")
+#                else:
+#                    if result <= threshold:
+#                        DoS = -DoS
+#                        await ctx.send(f"Rolled a **{result}** vs **{threshold}**.\n**Succeeded** with **{DoS}** Degrees of Success!")
+#                    if result > threshold:
+#                        await ctx.send(f"Rolled a **{result}** vs **{threshold}**.\n**Failed** with **{DoS}** Degrees of Failure!")
+#            except:
+#                print(traceback.format_exc())
+#        else:
+#            modifier = numexpr.evaluate(modifier)
+#            try:
+#                result = await numberGen(1, 1, 100, modifier)
+#                roll = result[1][0]
+#                result = result[0]
+#                await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}**.")
+#            except:
+#                print(traceback.format_exc())
                 
 
 #Create an initiative encounter within the initiative database
@@ -981,4 +981,9 @@ async def numberGen(count, min, max, mod):
     del rollList[0];
     return result, rollList
 
-client.start()
+while True:
+    try:
+        client.start()
+    except:
+        print("Bot crashed. Did we lose connection?")
+        print(traceback.format_exc())
