@@ -1002,7 +1002,7 @@ async def numberGen(count, min, max, mod):
             dieRoll = GENERATOR.randint(min,max)
         except:                                 #Look up: If this messes up, it'll default back to Python's default pseudorandomness.
             print('Using Pseudorandomness...')
-            result = random.randint(min,max)
+            dieRoll = random.randint(min,max)
             if not GENERATOR:
                 try:
                     GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
