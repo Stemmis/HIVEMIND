@@ -398,9 +398,9 @@ async def rollshadowrun(ctx, pool:int, limit:int, edge:bool, modifier:int=0, com
                 ones += 1
             if(val >= 5):
                 hits += 1
-            if(edge && (val == 6)):
+            if(edge and (val == 6)):
                 sixes += 1
-        if(edge && (sixes > 0)):
+        if(edge and (sixes > 0)):
             edgeResult = await numberGen(sixes, 1, 6, 0)
             for val in result:
                 if(val == 1):
@@ -411,6 +411,21 @@ async def rollshadowrun(ctx, pool:int, limit:int, edge:bool, modifier:int=0, com
             message = f"```diff\n+{comment}\n```"
         else:
             message = ""
+        if edge:
+            if ones >= pool/2:
+                if hits == 0:
+                        await ctx.send(message + f"**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Ones: **{ones}**), Exploding Sixes: **{sixes}**)\n```{result}```")
+                else:
+                    if hits == 1:
+                        await ctx.send(message + f"Rolled **{hits}** hit and **Glitched!** (Dice: **{pool}**, Ones: **{ones}**, Exploding Sixes: **{sixes}**)\n```{result}```\n```{edgeResult}```")
+                    else:
+                        await ctx.send(message + f"Rolled **{hits}** hits and **Glitched!** (Dice: **{pool}**, Ones: **{ones}**, Exploding Sixes: **{sixes}**)\n```{result}```\n```{edgeResult}```")
+            else:
+                if hits == 1:
+                    await ctx.send(message + f"Rolled **{hits}** hit. (Dice: **{pool}**, Ones: **{ones}, Exploding Sixes: **{sixes}**)\n```{result}```\n```{edgeResult}```")
+                else:
+                    await ctx.send(message + f"Rolled **{hits}** hits. (Dice: **{pool}**, Ones: **{ones}, Exploding Sixes: **{sixes}**)\n```{result}```\n```{edgeResult}```")
+        else:
             if ones >= pool/2:
                 if hits == 0:
                     await ctx.send(message + f"**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
