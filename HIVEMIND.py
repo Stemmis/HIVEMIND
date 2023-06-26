@@ -402,11 +402,14 @@ async def rollshadowrun(ctx, pool:int, limit:int, edge:bool, modifier:int=0, com
                 sixes += 1
         if(edge and (sixes > 0)):
             edgeResult = await numberGen(sixes, 1, 6, 0)
+            edgeResult = edgeResult[1]
             for val in result:
                 if(val == 1):
                     ones += 1
                 if(val >= 5):
                     hits += 1
+        else:
+            edgeResult = ""
         if(comment != ""):
             message = f"```diff\n+{comment}\n```"
         else:
