@@ -387,38 +387,38 @@ async def rollshadowrun(ctx, pool:int, limit:int, modifier:int, comment:str=""):
         result = await numberGen(pool, 1, 6, modifier)
         result = result[1]
         for val in result:
-            if val == 1:
+            if(val == 1):
                 ones += 1
-            if val >= 5:
+            if(val >= 5):
                 hits += 1
-            if comment != "":
-                if ones >= pool/2:
-                    if hits == 0:
-                        await ctx.send(f"```diff\n+{comment}\n```**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
-                    else:
-                        if hits == 1:
-                            await ctx.send(f"```diff\n+{comment}\n```Rolled **{min(hits,limit)}** hit and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
-                        else:
-                            await ctx.send(f"```diff\n+{comment}\n```Rolled **{min(hits,limit)}** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+        if(comment != ""):
+            if ones >= pool/2:
+                if hits == 0:
+                    await ctx.send(f"```diff\n+{comment}\n```**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
                 else:
                     if hits == 1:
-                        await ctx.send(f"```diff\n+{comment}\n```Rolled **{min(hits,limit)}** hit. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+                        await ctx.send(f"```diff\n+{comment}\n```Rolled **{min(hits,limit)}** hit and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
                     else:
-                        await ctx.send(f"```diff\n+{comment}\n```Rolled **{min(hits,limit)}** hits. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+                        await ctx.send(f"```diff\n+{comment}\n```Rolled **{min(hits,limit)}** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
             else:
-                if ones >= pool/2:
-                    if hits == 0:
-                        await ctx.send(f"**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
-                    else:
-                        if hits == 1:
-                            await ctx.send(f"Rolled **{min(hits,limit)}** hit and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
-                        else:
-                            await ctx.send(f"Rolled **{min(hits,limit)}** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+                if hits == 1:
+                    await ctx.send(f"```diff\n+{comment}\n```Rolled **{min(hits,limit)}** hit. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+                else:
+                    await ctx.send(f"```diff\n+{comment}\n```Rolled **{min(hits,limit)}** hits. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+        else:
+            if ones >= pool/2:
+                if hits == 0:
+                    await ctx.send(f"**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
                 else:
                     if hits == 1:
-                        await ctx.send(f"Rolled **{min(hits,limit)}** hit. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+                        await ctx.send(f"Rolled **{min(hits,limit)}** hit and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
                     else:
-                        await ctx.send(f"Rolled **{min(hits,limit)}** hits. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+                        await ctx.send(f"Rolled **{min(hits,limit)}** hits and **Glitched!** (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+            else:
+                if hits == 1:
+                    await ctx.send(f"Rolled **{min(hits,limit)}** hit. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
+                else:
+                    await ctx.send(f"Rolled **{min(hits,limit)}** hits. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**)\n```{result}```")
     except:
         print(traceback.format_exc())
         
