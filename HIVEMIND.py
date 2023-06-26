@@ -958,9 +958,9 @@ async def initnext(ctx, encounterid):
                 currTrack = track.fetchone()
                 if currTrack != None:
                     currName = currTrack[1]
-            currTrack = track.fetchone() #Once we've found who's currently up, we just head up to the next person in line. Finally!
-        else: #If the first person in the array is the one who just went, we know who's next and don't need a while statement. We'll just go to whoever's second. No scrolling needed.
-            currTrack = track.fetchone()
+        currTrack = track.fetchone() #Once we've found who's currently up, we just head up to the next person in line. Finally! And if the last person to go was top, we already know who's next. No need for a while loop.
+        if currTrack == None:
+            currTrack = top
         try:
             owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=currTrack[2])
             if currTrack != None:
