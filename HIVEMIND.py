@@ -377,7 +377,7 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
                     )
                 ]
             )
-async def rollshadowrun(ctx, pool:int, limit: int, modifier: int, comment: string):
+async def rollshadowrun(ctx, pool:int, limit:int, modifier:int, comment:str=""):
     if pool > MAX_DICE:
         await ctx.send(content = "Please don't roll so many dice at once.")
         raise ValueError(f"Too many dice in pool! {pool}")
