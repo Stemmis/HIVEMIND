@@ -392,7 +392,7 @@ async def rollshadowrun(ctx, pool:int, limit:int, edge:bool, modifier:int=0, com
     sixes = 0 #Here for the Rule of Sixes, edge and all
     try:
         result = await numberGen(pool, 1, 6, 0)
-        result = result[1]
+        result = sorted(result[1])
         for val in result:
             if(val == 1):
                 ones += 1
@@ -402,7 +402,7 @@ async def rollshadowrun(ctx, pool:int, limit:int, edge:bool, modifier:int=0, com
                 sixes += 1
         if(edge and (sixes > 0)):
             edgeResult = await numberGen(sixes, 1, 6, 0)
-            edgeResult = edgeResult[1]
+            edgeResult = sorted(edgeResult[1])
             for val in result:
                 if(val == 1):
                     ones += 1
@@ -420,14 +420,14 @@ async def rollshadowrun(ctx, pool:int, limit:int, edge:bool, modifier:int=0, com
                         await ctx.send(message + f"**!!Critical Glitch!!** Rolled **0** hits and **Glitched!** (Dice: **{pool}**, Ones: **{ones}**), Exploding Sixes: **{sixes}**)\n```{result}```")
                 else:
                     if hits == 1:
-                        await ctx.send(message + f"Rolled **{hits}** hit and **Glitched!** (Dice: **{pool}**, Ones: **{ones}**, Exploding Sixes: **{sixes}**)\n```{result}```\n```{edgeResult}```")
+                        await ctx.send(message + f"Rolled **{hits}** hit and **Glitched!** (Dice: **{pool}**, Ones: **{ones}**, Exploding Sixes: **{sixes}**)\n```{result}```\nRerolled Sixes:```{edgeResult}```")
                     else:
-                        await ctx.send(message + f"Rolled **{hits}** hits and **Glitched!** (Dice: **{pool}**, Ones: **{ones}**, Exploding Sixes: **{sixes}**)\n```{result}```\n```{edgeResult}```")
+                        await ctx.send(message + f"Rolled **{hits}** hits and **Glitched!** (Dice: **{pool}**, Ones: **{ones}**, Exploding Sixes: **{sixes}**)\n```{result}```\nRerolled Sixes:```{edgeResult}```")
             else:
                 if hits == 1:
-                    await ctx.send(message + f"Rolled **{hits}** hit. (Dice: **{pool}**, Ones: **{ones}, Exploding Sixes: **{sixes}**)\n```{result}```\n```{edgeResult}```")
+                    await ctx.send(message + f"Rolled **{hits}** hit. (Dice: **{pool}**, Ones: **{ones}**, Exploding Sixes: **{sixes}**)\n```{result}```\nRerolled Sixes:```{edgeResult}```")
                 else:
-                    await ctx.send(message + f"Rolled **{hits}** hits. (Dice: **{pool}**, Ones: **{ones}, Exploding Sixes: **{sixes}**)\n```{result}```\n```{edgeResult}```")
+                    await ctx.send(message + f"Rolled **{hits}** hits. (Dice: **{pool}**, Ones: **{ones}**, Exploding Sixes: **{sixes}**)\n```{result}```\nRerolled Sixes:```{edgeResult}```")
         else:
             if ones >= pool/2:
                 if hits == 0:
