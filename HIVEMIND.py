@@ -384,13 +384,14 @@ async def rollshadowrun(ctx, pool:int, limit:int, modifier:int, comment:str=""):
     ones = 0
     hits = 0
     try:
-        result = await numberGen(pool, 1, 6, modifier)
+        result = await numberGen(pool, 1, 6, 0)
         result = result[1]
         for val in result:
             if(val == 1):
                 ones += 1
             if(val >= 5):
                 hits += 1
+        hits += modifier
         if(comment != ""):
             if ones >= pool/2:
                 if hits == 0:
