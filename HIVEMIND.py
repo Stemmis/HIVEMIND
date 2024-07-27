@@ -3,6 +3,7 @@ import random
 import sourcerandom
 import sys
 import traceback
+import math
 #import numexpr
 import sqlite3
 import interactions
@@ -676,6 +677,58 @@ async def row(ctx, threshold:int = 0, modifier:int = 0):
                 await ctx.send(f"Rolled a *{roll}* with a modifier of *{modifier}* for **{result}**.")
             else:
                 await ctx.send(f"Rolled a **{result}**.")
+    except:
+        print(traceback.format_exc())
+        
+#Roll dice for the World of Darkness family of systems.
+#Roll a pool of d10's, with each 6+ being a "hit".
+@client.command(name="rollwod",
+                description="Roll dice for the World of Darkness family of systems",
+                options = [
+                    interactions.Option(
+                        name="pool",
+                        description="Number of dice in your pool",
+                        type=4,
+                        required=True
+                    ),
+                    interactions.Option(
+                        name="modifier",
+                        description="Modifier (free hits) to roll",
+                        type=4,
+                        required=False
+                    ),
+                    interactions.Option(
+                        name="comment",
+                        description="Optional comment - say what the roll is for",
+                        type=3,
+                        required=False
+                    )
+                ]
+            )
+async def rollwod(ctx, pool:int, modifier:int=0, comment:str=""):
+    if pool > MAX_DICE:
+        await ctx.send(content = "Please don't roll so many dice at once.")
+        raise ValueError(f"Too many dice in pool! {pool}")
+    hits = modifier
+    try:
+        result = await numberGen(pool, 1, 10, 0)
+        result = result[1]
+        tens = 0
+        for val in result:
+            if(val >= 6):
+                hits += 1
+            if(val == 10):
+                tens += 1
+        tens = math.floor(tens / 2) #WoD makes crits only apply to pairs of tens. Weird but them's the rules.
+        result = result + (tens * 2)
+        if(comment != ""):
+            message = f"```diff\n+{comment}\n```"
+        else:
+            message = ""
+        if hits == 1:
+            await ctx.send(message + f"Rolled **1** hit. (Dice: **{pool}**, Modifier: **{modifier}**)\n```{result}```")
+        else:
+            await ctx.send(message + f"Rolled **{hits}** hits. (Dice: **{pool}**, Modifier: **{modifier}**), Critical Successes: **{tens}**\n```{result}```")
     except:
         print(traceback.format_exc())
         
