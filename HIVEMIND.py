@@ -720,12 +720,12 @@ async def rollwod(ctx, pool:int, modifier:int=0, comment:str=""):
             if(val == 10):
                 tens += 1
         tens = math.floor(tens / 2) #WoD makes crits only apply to pairs of tens. Weird but them's the rules.
-        result = result + (tens * 2)
+        hits = hits + (tens * 2)
         if(comment != ""):
             message = f"```diff\n+{comment}\n```"
         else:
             message = ""
-        if hits == 1:
+        if(hits == 1):
             await ctx.send(message + f"Rolled **1** hit. (Dice: **{pool}**, Modifier: **{modifier}**)\n```{result}```")
         else:
             await ctx.send(message + f"Rolled **{hits}** hits. (Dice: **{pool}**, Modifier: **{modifier}**), Critical Successes: **{tens}**\n```{result}```")
