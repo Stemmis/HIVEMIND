@@ -24,10 +24,10 @@ global GENERATOR = None
 
 #Initialize Generator
 try:
-    global GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
+    GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
 except:
     print(traceback.format_exc())
-    global GENERATOR = None
+    GENERATOR = None
     
 #Initialize Database
 
@@ -44,10 +44,10 @@ initiative.close()
 async def initGen():
     if GENERATOR is None:
         try:
-            global GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
+            GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
         except:
             print(traceback.format_exc())
-            global GENERATOR = None
+            GENERATOR = None
 
 #Begin, initialize bot.
 @client.event
