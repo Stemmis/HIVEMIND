@@ -19,6 +19,7 @@ client = interactions.Client(str(sys.argv[1])) #The bot itself. Pass token as ar
 
 MAX_VALUE = 4294967296
 MAX_DICE = 1000
+GENERATOR = None
 
 
 #Initialize Generator
