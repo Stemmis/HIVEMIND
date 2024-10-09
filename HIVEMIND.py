@@ -25,10 +25,15 @@ GENERATOR = None
 #Initialize Generator
 try:
     GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
+    activity = discord.Game(name='with True Randomness')
+    await client.change_presence(status=discord.Status.idle, activity=activity)
 except:
     print(traceback.format_exc())
     print('qrng_anu is not responding.\n')
     GENERATOR = None
+    activity = discord.Game(name='with Pseudorandomness')
+    await client.change_presence(status=discord.Status.idle, activity=activity)
+
     
 #Initialize Database
 
@@ -47,10 +52,14 @@ async def initGen():
     if GENERATOR is None:
         try:
             GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
+            activity = discord.Game(name='with True Randomness')
+            await client.change_presence(status=discord.Status.idle, activity=activity)
         except:
             print(traceback.format_exc())
             print('qrng_anu is not responding.\n')
             GENERATOR = None
+            activity = discord.Game(name='with Pseudorandomness')
+            await client.change_presence(status=discord.Status.idle, activity=activity)
 
 #Begin, initialize bot.
 @client.event
