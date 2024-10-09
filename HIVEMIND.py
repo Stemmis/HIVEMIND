@@ -669,9 +669,6 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
                 ]
             )
 async def row(ctx, threshold:int = 0, modifier:int = 0):
-    if pool > MAX_DICE:
-        await ctx.send(content = "Please don't roll so many dice at once.")
-        raise ValueError(f"Too many dice in pool! {pool}")
     try:
         await ctx.defer()
         result = await numberGen(1, 1, 100, modifier)
