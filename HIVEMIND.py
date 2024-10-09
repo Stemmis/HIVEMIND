@@ -272,8 +272,8 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
         await ctx.send(content = "Please don't roll so many dice at once.")
         raise ValueError(f"Too many dice in pool! {pool}")
     if pool == 1:
-        await ctx.defer()
         try:
+            await ctx.defer()
             result = await numberGen(repetition, 1, sides, 0)
             for index in result[1]:
                 index += modifier
@@ -293,9 +293,9 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
             print(traceback.format_exc())
     else:
         if(comment != ""):
-            await ctx.defer()
             try:
                 newPool = pool * repetition
+                await ctx.defer()
                 result = await numberGen(newPool, 1, sides, 0)
                 for index in result[1]:
                     index += modifier
@@ -394,6 +394,7 @@ async def rollshadowrun(ctx, pool:int, limit:int, edge:bool=False, modifier:int=
     hits = modifier
     sixes = 0 #Here for the Rule of Sixes, edge and all
     try:
+        await ctx.defer()
         result = await numberGen(pool, 1, 6, 0)
         result = sorted(result[1])
         for val in result:
@@ -404,6 +405,7 @@ async def rollshadowrun(ctx, pool:int, limit:int, edge:bool=False, modifier:int=
             if(edge and (val == 6)):
                 sixes += 1
         if(edge and (sixes > 0)):
+            await ctx.defer()
             edgeResult = await numberGen(sixes, 1, 6, 0)
             edgeResult = sorted(edgeResult[1])
             for val in edgeResult:
@@ -513,9 +515,11 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
         if pool > MAX_DICE:
             await ctx.send(content = "Please don't roll so many dice at once.")
             raise ValueError(f"Too many dice in pool! {pool}")
+        await ctx.defer()
         result = await numberGen(pool, 1, 6, 0)
         if bonus !=0:
             try:
+                await ctx.defer()
                 bonusList = await numberGen(bonus, 1, 6, 0)
                 bonusList = bonusList[1]
                 workList = result[1]
@@ -657,6 +661,7 @@ async def row(ctx, threshold:int = 0, modifier:int = 0):
         await ctx.send(content = "Please don't roll so many dice at once.")
         raise ValueError(f"Too many dice in pool! {pool}")
     try:
+        await ctx.defer()
         result = await numberGen(1, 1, 100, modifier)
         roll = result[1][0]
         result = result[0]
@@ -713,6 +718,7 @@ async def rollwod(ctx, pool:int, modifier:int=0, comment:str=""):
         raise ValueError(f"Too many dice in pool! {pool}")
     hits = modifier
     try:
+        await ctx.defer()
         result = await numberGen(pool, 1, 10, 0)
         result = result[1]
         tens = 0
@@ -920,6 +926,7 @@ async def initroll(ctx, encounterid, charactername, pool, sides, modifier:int = 
                 valid = False  
         if valid == True:
             initiative.execute(f"DELETE FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';") #Updates old initiative value for newly rolled one IF the user owns this character.
+            await ctx.defer()
             initVal = await numberGen(pool, 1, sides, modifier)
             initVal = initVal[0]
             initiative.execute(f"INSERT INTO CHARACTER VALUES ({encounterid},'{charactername}',{ctx.member.id},{initVal});")
@@ -1090,7 +1097,6 @@ async def numberGen(count, min, max, mod):
         rollList.append(dieRoll)
         result = result + dieRoll
     del rollList[0];
-    print('Made it through the numberGen function')
     return result, rollList
 
 while True:
