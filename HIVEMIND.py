@@ -1079,7 +1079,6 @@ async def numberGen(count, min, max, mod):
         except:                                 #Look up: If this messes up, it'll default back to Python's default pseudorandomness.
             print('Using Pseudorandomness...')
             dieRoll = random.randint(min,max)
-            print('Rolled Successfully.')
             if GENERATOR is None:
                 try:
                     GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
@@ -1089,6 +1088,7 @@ async def numberGen(count, min, max, mod):
         rollList.append(dieRoll)
         result = result + dieRoll
     del rollList[0];
+    print('Made it through the numberGen function')
     return result, rollList
 
 while True:
