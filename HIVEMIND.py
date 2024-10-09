@@ -19,15 +19,15 @@ client = interactions.Client(str(sys.argv[1])) #The bot itself. Pass token as ar
 
 MAX_VALUE = 4294967296
 MAX_DICE = 1000
-GENERATOR = None
+global GENERATOR = None
 
 
 #Initialize Generator
 try:
-    GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
+    global GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
 except:
     print(traceback.format_exc())
-    GENERATOR = None
+    global GENERATOR = None
     
 #Initialize Database
 
@@ -42,7 +42,7 @@ initiative.close()
 #Functions
 
 async def initGen():
-    if(global GENERATOR is None):
+    if GENERATOR is None:
         try:
             global GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
         except:
