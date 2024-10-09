@@ -20,17 +20,20 @@ client = interactions.Client(str(sys.argv[1])) #The bot itself. Pass token as ar
 MAX_VALUE = 4294967296
 MAX_DICE = 1000
 GENERATOR = None
+IS_PSEUDO = interactions.activity.create('with Pseudorandomness')
+IS_TRUE = interactions.activity.create('with True Randomness')
+ACTIVITY = IS_PSEUDO
 
 
 #Initialize Generator
 try:
     GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
-    activity = discord.Game(name='with True Randomness')
+    ACTIVITY = IS_TRUE
 except:
     print(traceback.format_exc())
     print('qrng_anu is not responding.\n')
     GENERATOR = None
-    activity = discord.Game(name='with Pseudorandomness')
+    ACTIVITY = IS_PSEUDO
 
     
 #Initialize Database
@@ -47,23 +50,24 @@ initiative.close()
 
 async def initGen():
     global GENERATOR
+    global ACTIVITY
     if GENERATOR is None:
         try:
             GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
-            activity = discord.Game(name='with True Randomness')
-            await client.change_presence(activity=activity)
+            ACTIVITY = IS_TRUE
+            #await client.change_presence(activity=activity)
         except:
             print(traceback.format_exc())
             print('qrng_anu is not responding.\n')
             GENERATOR = None
-            activity = discord.Game(name='with Pseudorandomness')
-            await client.change_presence(activity=activity)
+            ACTIVITY = IS_PSEUDO
+            #await client.change_presence(activity=activity)
 
 #Begin, initialize bot.
 @client.event
 async def on_ready():
     print('We have logged in as HIVEMIND')
-    await client.change_presence(activity=activity)
+    #await client.change_presence(activity=activity)
    
     
     
