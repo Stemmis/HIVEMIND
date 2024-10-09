@@ -45,6 +45,14 @@ initiative.close()
 async def on_ready():
     print('We have logged in as HIVEMIND')
     
+async def initGen():
+    if GENERATOR is None:
+        try:
+            GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
+        except:
+            print(traceback.format_exc())
+            GENERATOR = None
+    
     
 #Set prefix
 #@client.event
@@ -182,6 +190,7 @@ async def roll(ctx, pool: int, sides: int, modifier: int = 0, comment:str = ""):
             if len(message) > 2000:
                 message = f"Rolled **{pool}** dice with **{sides}** sides, with a modifier of **{modifier}**.\nYour total is **{result[0]}**."
             await ctx.send(content = message)
+        await initGen()
 
 #Regular ? implementation of above
 #async def get_roll(edited_message, channel):
@@ -348,6 +357,7 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
                     await ctx.send(content = message)
             except:
                 print(traceback.format_exc())
+    await initGen()
 #Roll dice for the Shadowrun system.
 #Roll a pool of d6's, with each 5 or 6 being a "hit".
 #You cannot exceed your limit on hits; also, if half of your rolls were ones, you GLITCH. If you got no rolls and glitch, you CRITICAL GLITCH.
@@ -449,6 +459,7 @@ async def rollshadowrun(ctx, pool:int, limit:int, edge:bool=False, modifier:int=
                     await ctx.send(message + f"Rolled **{min(hits,limit)}** hits. (Dice: **{pool}**, Limit: **{limit}** Ones: **{ones}**, Modifier: **{modifier}**)\n```{result}```")
     except:
         print(traceback.format_exc())
+    await initGen()
         
 #Shadowrun non-slash workaround
 #async def get_shadowrun(edited_message, ctx):
@@ -557,6 +568,7 @@ async def rollswordchronicle(ctx, pool:int, bonus:int = 0, difficulty:int = 0, m
                 await ctx.send(f"Rolled a total of **{result[0]}**.\n```{result[1]} + {modifier}```")
     except:
         print(traceback.format_exc())
+    await initGen()
 
 
 #Sword Chronicle non-slash workaround
@@ -686,6 +698,7 @@ async def row(ctx, threshold:int = 0, modifier:int = 0):
                 await ctx.send(f"Rolled a **{result}**.")
     except:
         print(traceback.format_exc())
+    await initGen()
         
 #Roll dice for the World of Darkness family of systems.
 #Roll a pool of d10's, with each 6+ being a "hit".
@@ -739,6 +752,7 @@ async def rollwod(ctx, pool:int, modifier:int=0, comment:str=""):
             await ctx.send(message + f"Rolled **{hits}** hits. (Dice: **{pool}**, Modifier: **{modifier}**), Critical Successes: **{tens}**\n```{result}```")
     except:
         print(traceback.format_exc())
+    await initGen()
         
 #Row non-slash workaround
 #async def get_row(edited_message, ctx):
@@ -941,6 +955,7 @@ async def initroll(ctx, encounterid, charactername, pool, sides, modifier:int = 
                 initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{charactername}' WHERE EID = {encounterid};") #If there's nothing else, this is the highest.
             initiative.commit()
     initiative.close()
+    await initGen()
 
 #Sets initiative value within initiative database
 #Manually edits initiative value of specified character within specified encounter to specified number.
@@ -1088,12 +1103,6 @@ async def numberGen(count, min, max, mod):
         except:                                 #Look up: If this messes up, it'll default back to Python's default pseudorandomness.
             print('Using Pseudorandomness...')
             dieRoll = random.randint(min,max)
-            if GENERATOR is None:
-                try:
-                    GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
-                except:
-                    print(traceback.format_exc())
-                    GENERATOR = None
         rollList.append(dieRoll)
         result = result + dieRoll
     del rollList[0];
