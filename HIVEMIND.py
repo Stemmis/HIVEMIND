@@ -42,7 +42,7 @@ initiative.close()
 #Functions
 
 async def initGen():
-    if global GENERATOR is None:
+    if(global GENERATOR is None):
         try:
             global GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
         except:
