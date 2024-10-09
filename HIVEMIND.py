@@ -158,6 +158,7 @@ async def roll(ctx, pool: int, sides: int, modifier: int = 0, comment:str = ""):
         await ctx.send(content = "Please don't roll so many dice at once.")
         raise ValueError(f"Too many dice in pool! {pool}")
     if pool == 1:
+        await ctx.defer()
         try:
             result = await numberGen(1, 1, sides, modifier)
             if(comment != ""):
@@ -271,6 +272,7 @@ async def repeatroll(ctx, pool: int, sides: int, repetition: int, modifier: int 
         await ctx.send(content = "Please don't roll so many dice at once.")
         raise ValueError(f"Too many dice in pool! {pool}")
     if pool == 1:
+        await ctx.defer()
         try:
             result = await numberGen(repetition, 1, sides, 0)
             for index in result[1]:
