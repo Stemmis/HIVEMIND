@@ -27,7 +27,7 @@ try:
     GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
 except:
     print(traceback.format_exc())
-    print('\nqrng_anu is not responding.\n')
+    print('qrng_anu is not responding.\n')
     GENERATOR = None
     
 #Initialize Database
@@ -49,6 +49,7 @@ async def initGen():
             GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
         except:
             print(traceback.format_exc())
+            print('qrng_anu is not responding.\n')
             GENERATOR = None
 
 #Begin, initialize bot.
