@@ -41,11 +41,6 @@ initiative.close()
 
 #Functions
 
-#Begin, initialize bot.
-@client.event
-async def on_ready():
-    print('We have logged in as HIVEMIND')
-    
 async def initGen():
     if GENERATOR is None:
         try:
@@ -53,6 +48,12 @@ async def initGen():
         except:
             print(traceback.format_exc())
             GENERATOR = None
+
+#Begin, initialize bot.
+@client.event
+async def on_ready():
+    print('We have logged in as HIVEMIND')
+   
     
     
 #Set prefix
