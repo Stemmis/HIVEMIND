@@ -51,19 +51,19 @@ async def initGen():
         try:
             GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
             activity = discord.Game(name='with True Randomness')
-            await client.change_presence(status=discord.Status.idle, activity=activity)
+            await client.change_presence(activity=activity)
         except:
             print(traceback.format_exc())
             print('qrng_anu is not responding.\n')
             GENERATOR = None
             activity = discord.Game(name='with Pseudorandomness')
-            await client.change_presence(status=discord.Status.idle, activity=activity)
+            await client.change_presence(activity=activity)
 
 #Begin, initialize bot.
 @client.event
 async def on_ready():
     print('We have logged in as HIVEMIND')
-    await client.change_presence(status=discord.Status.idle, activity=activity)
+    await client.change_presence(activity=activity)
    
     
     
