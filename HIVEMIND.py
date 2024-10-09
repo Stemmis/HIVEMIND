@@ -27,6 +27,7 @@ try:
     GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
 except:
     print(traceback.format_exc())
+    print('\nqrng_anu is not responding.\n')
     GENERATOR = None
     
 #Initialize Database
