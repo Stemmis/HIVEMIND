@@ -26,13 +26,11 @@ GENERATOR = None
 try:
     GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
     activity = discord.Game(name='with True Randomness')
-    await client.change_presence(status=discord.Status.idle, activity=activity)
 except:
     print(traceback.format_exc())
     print('qrng_anu is not responding.\n')
     GENERATOR = None
     activity = discord.Game(name='with Pseudorandomness')
-    await client.change_presence(status=discord.Status.idle, activity=activity)
 
     
 #Initialize Database
@@ -65,6 +63,7 @@ async def initGen():
 @client.event
 async def on_ready():
     print('We have logged in as HIVEMIND')
+    await client.change_presence(status=discord.Status.idle, activity=activity)
    
     
     
