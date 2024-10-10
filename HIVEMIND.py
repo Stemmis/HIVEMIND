@@ -49,7 +49,7 @@ initiative.close()
 #Functions
 
 async def initGen():
-    #global GENERATOR
+    global GENERATOR
     #global ACTIVITY
     if GENERATOR is None:
         try:
