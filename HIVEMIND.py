@@ -23,7 +23,7 @@ MAX_DICE = 1000
 GENERATOR = None
 IS_PSEUDO = interactions.Activity.create('with Pseudorandomness')
 IS_TRUE = interactions.Activity.create('with True Randomness')
-ACTIVITY = IS_PSEUDO
+ACTIVITY = IS_PSEUDO 
 
 
 #Initialize Generator
@@ -710,9 +710,21 @@ async def row(ctx, threshold:int = 0, modifier:int = 0):
     required=True
 )
 @interactions.slash_option(
+    name="difficulty",
+    description="Difficulty of the roll",
+    opt_type=interactions.OptionType.INTEGER,
+    required=False
+)
+@interactions.slash_option(
     name="modifier",
     description="Modifier (free hits) to roll",
     opt_type=interactions.OptionType.INTEGER,
+    required=False
+)
+@interactions.slash_option(
+    name="crits",
+    description="Selects whether or not the roll crits on pairs of 10's",
+    opt_type=interactions.OptionType.BOOLEAN,
     required=False
 )
 @interactions.slash_option(
@@ -721,7 +733,7 @@ async def row(ctx, threshold:int = 0, modifier:int = 0):
     opt_type=interactions.OptionType.STRING,
     required=False
 )
-async def rollwod(ctx, pool:int, modifier:int=0, comment:str=""):
+async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=False, comment:str=""):
     if pool > MAX_DICE:
         await ctx.send(content = "Please don't roll so many dice at once.")
         raise ValueError(f"Too many dice in pool! {pool}")
@@ -731,21 +743,41 @@ async def rollwod(ctx, pool:int, modifier:int=0, comment:str=""):
         result = await numberGen(pool, 1, 10, 0)
         result = result[1]
         tens = 0
-        for val in result:
-            if(val >= 6):
-                hits += 1
-            if(val == 10):
-                tens += 1
-        tens = math.floor(tens / 2) #WoD makes crits only apply to pairs of tens. Weird but them's the rules.
-        hits = hits + (tens * 2)
+        oneRolled = False
+        if(crits):
+            for val in result:
+                if(val >= difficulty):
+                    hits += 1
+                if(val == 10):
+                    tens += 1
+                if(val == 1):
+                    hits -= 1
+            tens = math.floor(tens / 2) #WoD makes crits only apply to pairs of tens. Weird but them's the rules.
+            hits = hits + (tens * 2)   
+        else: 
+            for val in result:
+                if(val >= difficulty):
+                    hits += 1
+                if(val == 1):
+                    hits -= 1
+                    oneRolled = True
         if(comment != ""):
             message = f"```diff\n+{comment}\n```"
         else:
             message = ""
-        if(hits == 1):
-            await ctx.send(message + f"Rolled **1** hit. (Dice: **{pool}**, Modifier: **{modifier}**)\n```{result}```")
+        if(hits <= 0 and oneRolled):
+            message += f"```diff\n- BLUNDERED! -```"
+        if(not crits):
+            if(hits == 1):
+                await ctx.send(message + f"Rolled **1** hit. (Dice: **{pool}**, Difficulty: **{difficulty}**, Modifier: **{modifier}**)\n```{result}```")
+            else:
+                await ctx.send(message + f"Rolled **{hits}** hits. (Dice: **{pool}**, Difficulty: **{difficulty}**, Modifier: **{modifier}**)\n```{result}```")
         else:
-            await ctx.send(message + f"Rolled **{hits}** hits. (Dice: **{pool}**, Modifier: **{modifier}**), Critical Successes: **{tens}**\n```{result}```")
+            if(hits == 1):
+                await ctx.send(message + f"Rolled **1** hit. (Dice: **{pool}**, Difficulty: **{difficulty}**, Modifier: **{modifier}**, Critical Successes: **{tens}**)\n```{result}```")
+            #Normal message goes here
+            else:
+                await ctx.send(message + f"Rolled **{hits}** hits. (Dice: **{pool}**, Difficulty: **{difficulty}**, Modifier: **{modifier}**, Critical Successes: **{tens}**)\n```{result}```")
     except:
         print(traceback.format_exc())
     await initGen()
