@@ -768,7 +768,7 @@ async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=Fa
             message = f"```diff\n+{comment}\n```"
         else:
             message = ""
-        if(!rolledSuccess and oneRolled):
+        if((not rolledSuccess) and oneRolled):
             message += f"```diff\n- BLUNDERED! -```"
         if(not crits):
             if(hits == 1):
