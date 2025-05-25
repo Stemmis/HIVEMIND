@@ -744,10 +744,12 @@ async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=Fa
         result = result[1]
         tens = 0
         oneRolled = False
+        rolledSuccess = False
         if(crits):
             for val in result:
                 if(val >= difficulty):
                     hits += 1
+                    rolledSuccess = True
                 if(val == 10):
                     tens += 1
                 if(val == 1):
@@ -758,6 +760,7 @@ async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=Fa
             for val in result:
                 if(val >= difficulty):
                     hits += 1
+                    rolledSuccess = True
                 if(val == 1):
                     hits -= 1
                     oneRolled = True
@@ -765,7 +768,7 @@ async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=Fa
             message = f"```diff\n+{comment}\n```"
         else:
             message = ""
-        if(hits <= 0 and oneRolled):
+        if(!rolledSuccess and oneRolled):
             message += f"```diff\n- BLUNDERED! -```"
         if(not crits):
             if(hits == 1):
