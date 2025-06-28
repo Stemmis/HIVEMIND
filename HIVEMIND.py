@@ -839,7 +839,7 @@ async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=Fa
 #Says the encounter ID in chat
 @interactions.slash_command(name = "init")
 async def init(ctx: interactions.SlashContext):
-    "Initiative family of commands"
+    #"Initiative family of commands"
     pass
     
 @init.subcommand(sub_cmd_name="start",
