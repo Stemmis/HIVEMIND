@@ -878,7 +878,7 @@ async def initend(ctx: interactions.SlashContext, encounterid):
             #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=masterID)
             owner = await client.fetch_user(masterID)
             await ctx.send(
-            content =f"Only the master of an initiative encounter can end it. Ask {owner.user}!",
+            content =f"Only the master of an initiative encounter can end it. Ask {owner.display_name}!",
             ephemeral=True)
         except:
             await ctx.send(
@@ -1094,7 +1094,7 @@ async def initorder(ctx: interactions.SlashContext, encounterid):
                     msgContent = msgContent + f"-↓-↓-↓-This character's turn-↓-↓-↓-\n"
                 #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=row[2])
                 owner = await client.fetch_user(row[2])
-                msgContent = msgContent + f"{row[3]}: {row[1]}, played by {owner.name}\n"
+                msgContent = msgContent + f"{row[3]}: {row[1]}, played by {owner.display_name}\n"
             msgContent = msgContent + f"```"
             await ctx.send(content = msgContent)
         except:
