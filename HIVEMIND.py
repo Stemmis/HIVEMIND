@@ -29,7 +29,6 @@ ACTIVITY = IS_PSEUDO
 #Initialize Generator
 try:
     GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
-    GENERATOR = None
     ACTIVITY = IS_TRUE
 except:
     print(traceback.format_exc())
@@ -56,7 +55,6 @@ async def initGen():
     if GENERATOR is None:
         try:
             GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
-            GENERATOR = None
             ACTIVITY = IS_TRUE
             await client.change_presence(activity=ACTIVITY)
         except:
