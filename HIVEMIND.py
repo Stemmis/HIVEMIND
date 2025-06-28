@@ -838,273 +838,273 @@ async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=Fa
 #Create an initiative encounter within the initiative database
 #Adds a new entry to the initiative database
 #Says the encounter ID in chat
-@interactions.slash_command(name = "initt")
-async def initt(ctx: interactions.SlashContext):
-    #"Initiative family of commands"
-    pass
+# @interactions.slash_command(name = "initt")
+# async def initt(ctx: interactions.SlashContext):
+    # #"Initiative family of commands"
+    # pass
     
-@initt.subcommand(sub_cmd_name="start",
-                sub_cmd_description = "Start a new initiative encounter.",
-)
-async def start(ctx: interactions.SlashContext):
-    initiative = sqlite3.connect('init.db')
-    cursor = initiative.execute("SELECT MAX (EID) FROM ENCOUNTER;")
-    highestID = cursor.fetchone()[0]
-    if highestID == None:
-        highestID = 0
-    ID = highestID + 1
-    initiative.execute(f"INSERT INTO ENCOUNTER VALUES ({ID}, {ctx.member.id}, 'Undefined');")
-    await ctx.send(f"Your encounter ID is {ID}.\nRoll initiative!")
-    initiative.commit()
-    initiative.close()
+# @initt.subcommand(sub_cmd_name="start",
+                # sub_cmd_description = "Start a new initiative encounter.",
+# )
+# async def start(ctx: interactions.SlashContext):
+    # initiative = sqlite3.connect('init.db')
+    # cursor = initiative.execute("SELECT MAX (EID) FROM ENCOUNTER;")
+    # highestID = cursor.fetchone()[0]
+    # if highestID == None:
+        # highestID = 0
+    # ID = highestID + 1
+    # initiative.execute(f"INSERT INTO ENCOUNTER VALUES ({ID}, {ctx.member.id}, 'Undefined');")
+    # await ctx.send(f"Your encounter ID is {ID}.\nRoll initiative!")
+    # initiative.commit()
+    # initiative.close()
     
-#Remove an initiative encounter from the initiative database
-#Removes an entry from the initiative database based on supplied ID
-#Says the encounter ID in chat
-@initt.subcommand(sub_cmd_name="end",
-                sub_cmd_description = "End an old initiative encounter.")
-@interactions.slash_option(
-    name = "encounterid",
-    description = "The ID of your encounter",
-    opt_type=interactions.OptionType.INTEGER,
-    required = True
-)
-async def initend(ctx: interactions.SlashContext, encounterid):
-    initiative = sqlite3.connect('init.db')
-    cursor = initiative.execute(f"SELECT MASTER FROM ENCOUNTER WHERE EID = {encounterid};")
-    masterID = cursor.fetchone()[0]
-    if (ctx.member.id) == masterID:
-        initiative.execute(f"DELETE FROM ENCOUNTER WHERE EID = {encounterid};")
-        initiative.execute(f"DELETE FROM CHARACTER WHERE EID = {encounterid};")
-        await ctx.send(f"Encounter over.")
-    else:
-        try:
-            #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=masterID)
-            owner = await client.fetch_user(masterID)
-            await ctx.send(
-            content =f"Only the master of an initiative encounter can end it. Ask {owner.display_name}!",
-            ephemeral=True)
-        except:
-            await ctx.send(
-            content=f"Only the master of an initiative encounter can end it. The master of the specified initiative encounter does not appear to be in this server.", 
-            ephemeral=True)
-            print(traceback.format_exc())
-    initiative.commit()
-    initiative.close()
+# #Remove an initiative encounter from the initiative database
+# #Removes an entry from the initiative database based on supplied ID
+# #Says the encounter ID in chat
+# @initt.subcommand(sub_cmd_name="end",
+                # sub_cmd_description = "End an old initiative encounter.")
+# @interactions.slash_option(
+    # name = "encounterid",
+    # description = "The ID of your encounter",
+    # opt_type=interactions.OptionType.INTEGER,
+    # required = True
+# )
+# async def initend(ctx: interactions.SlashContext, encounterid):
+    # initiative = sqlite3.connect('init.db')
+    # cursor = initiative.execute(f"SELECT MASTER FROM ENCOUNTER WHERE EID = {encounterid};")
+    # masterID = cursor.fetchone()[0]
+    # if (ctx.member.id) == masterID:
+        # initiative.execute(f"DELETE FROM ENCOUNTER WHERE EID = {encounterid};")
+        # initiative.execute(f"DELETE FROM CHARACTER WHERE EID = {encounterid};")
+        # await ctx.send(f"Encounter over.")
+    # else:
+        # try:
+            # #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=masterID)
+            # owner = await client.fetch_user(masterID)
+            # await ctx.send(
+            # content =f"Only the master of an initiative encounter can end it. Ask {owner.display_name}!",
+            # ephemeral=True)
+        # except:
+            # await ctx.send(
+            # content=f"Only the master of an initiative encounter can end it. The master of the specified initiative encounter does not appear to be in this server.", 
+            # ephemeral=True)
+            # print(traceback.format_exc())
+    # initiative.commit()
+    # initiative.close()
 
-#Print all EIDs into console
-@initt.subcommand(sub_cmd_name="view",
-                sub_cmd_description = "Debug command. Prints all initiative information into console.")
-async def initview(ctx: interactions.SlashContext):
-    initiative = sqlite3.connect('init.db')
-    cursor = initiative.execute("SELECT * FROM ENCOUNTER;")
-    for row in cursor:
-        print(f"ID: {row[0]}; Master: {row[1]}; Current: {row[2]}")
-    cursor = initiative.execute("SELECT * FROM CHARACTER;")
-    for row in cursor:
-        print(f"EID: {row[0]}; Character Name: {row[1]}; Player ID: {row[2]}; Initiative: {row[3]}")
-    await ctx.send(
-        content =f"This is a debug command.",
-        ephemeral=True
-    )
-    initiative.commit()
-    initiative.close()
+# #Print all EIDs into console
+# @initt.subcommand(sub_cmd_name="view",
+                # sub_cmd_description = "Debug command. Prints all initiative information into console.")
+# async def initview(ctx: interactions.SlashContext):
+    # initiative = sqlite3.connect('init.db')
+    # cursor = initiative.execute("SELECT * FROM ENCOUNTER;")
+    # for row in cursor:
+        # print(f"ID: {row[0]}; Master: {row[1]}; Current: {row[2]}")
+    # cursor = initiative.execute("SELECT * FROM CHARACTER;")
+    # for row in cursor:
+        # print(f"EID: {row[0]}; Character Name: {row[1]}; Player ID: {row[2]}; Initiative: {row[3]}")
+    # await ctx.send(
+        # content =f"This is a debug command.",
+        # ephemeral=True
+    # )
+    # initiative.commit()
+    # initiative.close()
 
-#Roll random initiative for a specified character
-#Rolls dice of specified size and quantity with optional modifier, updates initiative table using specified encounter value with specified charactername and result
-#Outputs roll result in chat
-@initt.subcommand(sub_cmd_name="roll",
-                sub_cmd_description = "Roll initiative.")
-@interactions.slash_option(
-    name = "encounterid",
-    description = "The ID of your encounter",
-    opt_type=interactions.OptionType.STRING,
-    required = True
-)
-@interactions.slash_option(
-    name = "charactername",
-    description = "Your character's name",
-    opt_type=interactions.OptionType.STRING,
-    required = True
-)
-@interactions.slash_option(
-    name="pool",
-    description="Number of dice in your pool",
-    opt_type=interactions.OptionType.INTEGER,
-    required=True
-)
-@interactions.slash_option(
-    name="sides",
-    description="Number of sides on each die",
-    opt_type=interactions.OptionType.INTEGER,
-    required=True
-)
-@interactions.slash_option(
-    name="modifier",
-    description="Modifier to roll",
-    opt_type=interactions.OptionType.INTEGER,
-    required=False
-)
-async def initroll(ctx: interactions.SlashContext, encounterid, charactername, pool, sides, modifier:int = 0):
-    if sides > MAX_VALUE:
-        if pool == 1:
-            await ctx.send(content = "Die exceeds size limit. Maybe you should roll a smaller die.")
-        else:
-            await ctx.send(content = "Dice exceed size limit. Maybe you should roll smaller dice.")
-        raise ValueError(f"Die has too many sides! {sides}")
-    if pool > MAX_DICE:
-        await ctx.send(content = "Please don't roll so many dice at once.")
-        raise ValueError(f"Too many dice in pool! {pool}")
-    valid = True
-    initiative = sqlite3.connect('init.db')
-    cursor = initiative.execute(f"SELECT EID FROM ENCOUNTER WHERE EID = {encounterid};")
-    if cursor.fetchone() == None: #Failed to select based on supplied ID
-        await ctx.send(content = f"Specified an invalid Encounter ID. Please try again.", ephemeral = True)
-    else:
-        cursor = initiative.execute(f"SELECT USERID FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';") #Specifically searches for this character within this encounter in database
-        UID = cursor.fetchone()
-        if UID != None:
-            if UID[0] != ctx.member.id:
-                await ctx.send(content = f"Someone else already rolled initiative for this character.", ephemeral = True)
-                valid = False  
-        if valid == True:
-            initiative.execute(f"DELETE FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';") #Updates old initiative value for newly rolled one IF the user owns this character.
-            await ctx.defer()
-            initVal = await numberGen(pool, 1, sides, modifier)
-            initVal = initVal[0]
-            initiative.execute(f"INSERT INTO CHARACTER VALUES ({encounterid},'{charactername}',{ctx.member.id},{initVal});")
-            await ctx.send(f"{charactername}'s initiative is **{initVal}**.")
-            cursor = initiative.execute(f"SELECT MAX(INIT) FROM CHARACTER WHERE EID = {encounterid};") #Find highest initiative
-            highest = cursor.fetchone()[0]
-            print(highest)
-            if highest != None:
-                if initVal >= highest:
-                    initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{charactername}' WHERE EID = {encounterid};") #If it's the highest, it should be the new current player
-            else:
-                initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{charactername}' WHERE EID = {encounterid};") #If there's nothing else, this is the highest.
-            initiative.commit()
-    initiative.close()
-    await initGen()
+# #Roll random initiative for a specified character
+# #Rolls dice of specified size and quantity with optional modifier, updates initiative table using specified encounter value with specified charactername and result
+# #Outputs roll result in chat
+# @initt.subcommand(sub_cmd_name="roll",
+                # sub_cmd_description = "Roll initiative.")
+# @interactions.slash_option(
+    # name = "encounterid",
+    # description = "The ID of your encounter",
+    # opt_type=interactions.OptionType.STRING,
+    # required = True
+# )
+# @interactions.slash_option(
+    # name = "charactername",
+    # description = "Your character's name",
+    # opt_type=interactions.OptionType.STRING,
+    # required = True
+# )
+# @interactions.slash_option(
+    # name="pool",
+    # description="Number of dice in your pool",
+    # opt_type=interactions.OptionType.INTEGER,
+    # required=True
+# )
+# @interactions.slash_option(
+    # name="sides",
+    # description="Number of sides on each die",
+    # opt_type=interactions.OptionType.INTEGER,
+    # required=True
+# )
+# @interactions.slash_option(
+    # name="modifier",
+    # description="Modifier to roll",
+    # opt_type=interactions.OptionType.INTEGER,
+    # required=False
+# )
+# async def initroll(ctx: interactions.SlashContext, encounterid, charactername, pool, sides, modifier:int = 0):
+    # if sides > MAX_VALUE:
+        # if pool == 1:
+            # await ctx.send(content = "Die exceeds size limit. Maybe you should roll a smaller die.")
+        # else:
+            # await ctx.send(content = "Dice exceed size limit. Maybe you should roll smaller dice.")
+        # raise ValueError(f"Die has too many sides! {sides}")
+    # if pool > MAX_DICE:
+        # await ctx.send(content = "Please don't roll so many dice at once.")
+        # raise ValueError(f"Too many dice in pool! {pool}")
+    # valid = True
+    # initiative = sqlite3.connect('init.db')
+    # cursor = initiative.execute(f"SELECT EID FROM ENCOUNTER WHERE EID = {encounterid};")
+    # if cursor.fetchone() == None: #Failed to select based on supplied ID
+        # await ctx.send(content = f"Specified an invalid Encounter ID. Please try again.", ephemeral = True)
+    # else:
+        # cursor = initiative.execute(f"SELECT USERID FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';") #Specifically searches for this character within this encounter in database
+        # UID = cursor.fetchone()
+        # if UID != None:
+            # if UID[0] != ctx.member.id:
+                # await ctx.send(content = f"Someone else already rolled initiative for this character.", ephemeral = True)
+                # valid = False  
+        # if valid == True:
+            # initiative.execute(f"DELETE FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';") #Updates old initiative value for newly rolled one IF the user owns this character.
+            # await ctx.defer()
+            # initVal = await numberGen(pool, 1, sides, modifier)
+            # initVal = initVal[0]
+            # initiative.execute(f"INSERT INTO CHARACTER VALUES ({encounterid},'{charactername}',{ctx.member.id},{initVal});")
+            # await ctx.send(f"{charactername}'s initiative is **{initVal}**.")
+            # cursor = initiative.execute(f"SELECT MAX(INIT) FROM CHARACTER WHERE EID = {encounterid};") #Find highest initiative
+            # highest = cursor.fetchone()[0]
+            # print(highest)
+            # if highest != None:
+                # if initVal >= highest:
+                    # initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{charactername}' WHERE EID = {encounterid};") #If it's the highest, it should be the new current player
+            # else:
+                # initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{charactername}' WHERE EID = {encounterid};") #If there's nothing else, this is the highest.
+            # initiative.commit()
+    # initiative.close()
+    # await initGen()
 
-#Sets initiative value within initiative database
-#Manually edits initiative value of specified character within specified encounter to specified number.
-#If character does not belong to command user, bot will throw an exception and stop.
-#Outputs new initiative and updates database
-@initt.subcommand(sub_cmd_name="set",
-                sub_cmd_description = "Set a character's initiative value.")
-@interactions.slash_option(
-    name = "encounterid",
-    description = "The ID of your encounter",
-    opt_type=interactions.OptionType.INTEGER,
-    required = True
-)
-@interactions.slash_option(
-    name = "charactername",
-    description = "The name of your character",
-    opt_type=interactions.OptionType.STRING,
-    required = True
-)
-@interactions.slash_option(
-    name = "newinit",
-    description = "Your new initiative value",
-    opt_type=interactions.OptionType.INTEGER,
-    required = True
-)
-async def initset(ctx: interactions.SlashContext, encounterid, charactername, newinit):
-    initiative = sqlite3.connect('init.db')
-    cursor = initiative.execute(f"SELECT EID FROM ENCOUNTER WHERE EID = {encounterid};")
-    if cursor.fetchone() == None:
-        await ctx.send(content = f"Specified an invalid Encounter ID. Please try again.", hidden = True)
-    else:
-        cursor = initiative.execute(f"SELECT CHAR_NAME FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
-        if cursor.fetchone() == None:
-            await ctx.send(content = f"Specified an invalid character name for the specified encounter. Please try again.", hidden = True)
-        else:
-            cursor = initiative.execute(f"SELECT USERID FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
-            if ctx.member.id != cursor.fetchone()[0]: #Cursor comes to a 2-dimensional array; the first array returned's first value is the UUID.
-                await ctx.send(content = f"You may only modify your own characters' initiative values.", hidden = True)
-            else:
-                initiative.execute(f"UPDATE CHARACTER SET INIT = {newinit} WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
-                initiative.commit()
-                await ctx.send(f"{charactername}'s initiative is now **{newinit}**.")
-    initiative.close()
+# #Sets initiative value within initiative database
+# #Manually edits initiative value of specified character within specified encounter to specified number.
+# #If character does not belong to command user, bot will throw an exception and stop.
+# #Outputs new initiative and updates database
+# @initt.subcommand(sub_cmd_name="set",
+                # sub_cmd_description = "Set a character's initiative value.")
+# @interactions.slash_option(
+    # name = "encounterid",
+    # description = "The ID of your encounter",
+    # opt_type=interactions.OptionType.INTEGER,
+    # required = True
+# )
+# @interactions.slash_option(
+    # name = "charactername",
+    # description = "The name of your character",
+    # opt_type=interactions.OptionType.STRING,
+    # required = True
+# )
+# @interactions.slash_option(
+    # name = "newinit",
+    # description = "Your new initiative value",
+    # opt_type=interactions.OptionType.INTEGER,
+    # required = True
+# )
+# async def initset(ctx: interactions.SlashContext, encounterid, charactername, newinit):
+    # initiative = sqlite3.connect('init.db')
+    # cursor = initiative.execute(f"SELECT EID FROM ENCOUNTER WHERE EID = {encounterid};")
+    # if cursor.fetchone() == None:
+        # await ctx.send(content = f"Specified an invalid Encounter ID. Please try again.", hidden = True)
+    # else:
+        # cursor = initiative.execute(f"SELECT CHAR_NAME FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
+        # if cursor.fetchone() == None:
+            # await ctx.send(content = f"Specified an invalid character name for the specified encounter. Please try again.", hidden = True)
+        # else:
+            # cursor = initiative.execute(f"SELECT USERID FROM CHARACTER WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
+            # if ctx.member.id != cursor.fetchone()[0]: #Cursor comes to a 2-dimensional array; the first array returned's first value is the UUID.
+                # await ctx.send(content = f"You may only modify your own characters' initiative values.", hidden = True)
+            # else:
+                # initiative.execute(f"UPDATE CHARACTER SET INIT = {newinit} WHERE EID = {encounterid} AND CHAR_NAME = '{charactername}';")
+                # initiative.commit()
+                # await ctx.send(f"{charactername}'s initiative is now **{newinit}**.")
+    # initiative.close()
 
-#Moves the initiative tracker up by 1 or loops back at end
+# #Moves the initiative tracker up by 1 or loops back at end
 
-@initt.subcommand(sub_cmd_name="next", sub_cmd_description = "Move the initiative tracker up by one.")
-@interactions.slash_option(
-    name = "encounterid",
-    description = "The ID of your encounter",
-    opt_type=interactions.OptionType.INTEGER,
-    required = True
-)
-async def initnext(ctx: interactions.SlashContext, encounterid):
-    initiative = sqlite3.connect('init.db')
-    current = initiative.execute(f"SELECT CURRENT FROM ENCOUNTER WHERE EID = {encounterid};")
-    current = current.fetchone()
-    if current == None:
-        await ctx.send(f"Specified encounter does not exist. Please try again!")
-    else:
-        current = current[0] #The sql query is a 2-dimensional array. This takes the top row of the table. Based on the table ENCOUNTER, which is updated last. This is whoever just went.
-        track = initiative.execute(f"SELECT * FROM CHARACTER WHERE EID = {encounterid} ORDER BY INIT DESC;")
-        top = track.fetchone() #This also takes the top row of the new table, with different behavior: deletes the row from track. This is whoever has the highest initiative, not whoever's next.
-        topName = top[1] #Character Name is the second value in table CHARACTER. This is their name.
-        if topName != current: #Case: the person who just went did not have the highest initiative. This means we have to iterate through the table until we find the character with that name.
-            currTrack = track.fetchone() #Who's next in the table, after "top" (aka the person who just went)? currTrack = current character the iterator is looking at.
-            if currTrack != None: #Once it's None, we've reached the end of the table and must loop back to the top.
-                currName = currTrack[1] #Once again, Character Name is the second value.
-            while (currName != current) and (currTrack != None): #Scroll through until we find whoever just went.
-                currTrack = track.fetchone()
-                if currTrack != None:
-                    currName = currTrack[1]
-        currTrack = track.fetchone() #Once we've found who's currently up, we just head up to the next person in line. Finally! And if the last person to go was top, we already know who's next. No need for a while loop.
-        if currTrack == None:
-            currTrack = top
-        try:
-            #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=currTrack[2])
-            owner = await client.fetch_user(currTrack[2])
-            if currTrack != None:
-                await ctx.send(f"It is {owner.mention}'s turn as {currTrack[1]}.")
-                initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{currTrack[1]}' WHERE EID = {encounterid};")
-            else:
-                await ctx.send(f"It is {owner.mention}'s turn as {topName}.")
-                initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{top[1]}' WHERE EID = {encounterid};")
-            initiative.commit()
-        except: 
-            await ctx.send(f"Could not find {currTrack[1]}'s owner in this server. Are you sure you're in the right place?", ephemeral = True)
-            print(traceback.format_exc())
-    initiative.close()
+# @initt.subcommand(sub_cmd_name="next", sub_cmd_description = "Move the initiative tracker up by one.")
+# @interactions.slash_option(
+    # name = "encounterid",
+    # description = "The ID of your encounter",
+    # opt_type=interactions.OptionType.INTEGER,
+    # required = True
+# )
+# async def initnext(ctx: interactions.SlashContext, encounterid):
+    # initiative = sqlite3.connect('init.db')
+    # current = initiative.execute(f"SELECT CURRENT FROM ENCOUNTER WHERE EID = {encounterid};")
+    # current = current.fetchone()
+    # if current == None:
+        # await ctx.send(f"Specified encounter does not exist. Please try again!")
+    # else:
+        # current = current[0] #The sql query is a 2-dimensional array. This takes the top row of the table. Based on the table ENCOUNTER, which is updated last. This is whoever just went.
+        # track = initiative.execute(f"SELECT * FROM CHARACTER WHERE EID = {encounterid} ORDER BY INIT DESC;")
+        # top = track.fetchone() #This also takes the top row of the new table, with different behavior: deletes the row from track. This is whoever has the highest initiative, not whoever's next.
+        # topName = top[1] #Character Name is the second value in table CHARACTER. This is their name.
+        # if topName != current: #Case: the person who just went did not have the highest initiative. This means we have to iterate through the table until we find the character with that name.
+            # currTrack = track.fetchone() #Who's next in the table, after "top" (aka the person who just went)? currTrack = current character the iterator is looking at.
+            # if currTrack != None: #Once it's None, we've reached the end of the table and must loop back to the top.
+                # currName = currTrack[1] #Once again, Character Name is the second value.
+            # while (currName != current) and (currTrack != None): #Scroll through until we find whoever just went.
+                # currTrack = track.fetchone()
+                # if currTrack != None:
+                    # currName = currTrack[1]
+        # currTrack = track.fetchone() #Once we've found who's currently up, we just head up to the next person in line. Finally! And if the last person to go was top, we already know who's next. No need for a while loop.
+        # if currTrack == None:
+            # currTrack = top
+        # try:
+            # #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=currTrack[2])
+            # owner = await client.fetch_user(currTrack[2])
+            # if currTrack != None:
+                # await ctx.send(f"It is {owner.mention}'s turn as {currTrack[1]}.")
+                # initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{currTrack[1]}' WHERE EID = {encounterid};")
+            # else:
+                # await ctx.send(f"It is {owner.mention}'s turn as {topName}.")
+                # initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{top[1]}' WHERE EID = {encounterid};")
+            # initiative.commit()
+        # except: 
+            # await ctx.send(f"Could not find {currTrack[1]}'s owner in this server. Are you sure you're in the right place?", ephemeral = True)
+            # print(traceback.format_exc())
+    # initiative.close()
             
-#Moves the initiative tracker up by 1
-@initt.subcommand(sub_cmd_name="order", sub_cmd_description = "View an encounter's initiative order.")
-@interactions.slash_option(
-    name = "encounterid",
-    description = "The ID of your encounter",
-    opt_type=interactions.OptionType.INTEGER,
-    required = True
-)
-async def initorder(ctx: interactions.SlashContext, encounterid):
-    initiative = sqlite3.connect('init.db')
-    current = initiative.execute(f"SELECT * FROM ENCOUNTER WHERE EID = {encounterid};")
-    current = current.fetchone()
-    if current == None:
-        await ctx.send(f"Specified encounter does not exist. Please try again!")
-    else:
-        track = initiative.execute(f"SELECT * FROM CHARACTER WHERE EID = {encounterid} ORDER BY INIT DESC;")
-        msgContent = f"**Initiative Order** `{encounterid}`\n```"
-        try:
-            for row in track:
-                if row[1] == current[2]:
-                    msgContent = msgContent + f"-↓-↓-↓-This character's turn-↓-↓-↓-\n"
-                #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=row[2])
-                owner = await client.fetch_user(row[2])
-                msgContent = msgContent + f"{row[3]}: {row[1]}, played by {owner.display_name}\n"
-            msgContent = msgContent + f"```"
-            await ctx.send(content = msgContent)
-        except:
-            await ctx.send(f"Could not find at least one player in this encounter within the current server. Is this the right place?", ephemeral=True)
-            print(traceback.format_exc())
-    initiative.close()
+# #Moves the initiative tracker up by 1
+# @initt.subcommand(sub_cmd_name="order", sub_cmd_description = "View an encounter's initiative order.")
+# @interactions.slash_option(
+    # name = "encounterid",
+    # description = "The ID of your encounter",
+    # opt_type=interactions.OptionType.INTEGER,
+    # required = True
+# )
+# async def initorder(ctx: interactions.SlashContext, encounterid):
+    # initiative = sqlite3.connect('init.db')
+    # current = initiative.execute(f"SELECT * FROM ENCOUNTER WHERE EID = {encounterid};")
+    # current = current.fetchone()
+    # if current == None:
+        # await ctx.send(f"Specified encounter does not exist. Please try again!")
+    # else:
+        # track = initiative.execute(f"SELECT * FROM CHARACTER WHERE EID = {encounterid} ORDER BY INIT DESC;")
+        # msgContent = f"**Initiative Order** `{encounterid}`\n```"
+        # try:
+            # for row in track:
+                # if row[1] == current[2]:
+                    # msgContent = msgContent + f"-↓-↓-↓-This character's turn-↓-↓-↓-\n"
+                # #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=row[2])
+                # owner = await client.fetch_user(row[2])
+                # msgContent = msgContent + f"{row[3]}: {row[1]}, played by {owner.display_name}\n"
+            # msgContent = msgContent + f"```"
+            # await ctx.send(content = msgContent)
+        # except:
+            # await ctx.send(f"Could not find at least one player in this encounter within the current server. Is this the right place?", ephemeral=True)
+            # print(traceback.format_exc())
+    # initiative.close()
      
 
 #The rolling itself! This function generates random numbers. 
