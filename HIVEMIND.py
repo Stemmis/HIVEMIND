@@ -837,8 +837,8 @@ async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=Fa
 #Create an initiative encounter within the initiative database
 #Adds a new entry to the initiative database
 #Says the encounter ID in chat
-@interactions.slash_command(name = "init")
-async def init(ctx: interactions.SlashContext):
+@interactions.slash_command(name = "init2")
+async def init2(ctx: interactions.SlashContext):
     #"Initiative family of commands"
     pass
     
