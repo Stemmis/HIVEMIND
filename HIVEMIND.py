@@ -28,9 +28,9 @@ ACTIVITY = IS_PSEUDO
 
 #Initialize Generator
 try:
-    #GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
+    GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
     GENERATOR = None
-    #ACTIVITY = IS_TRUE
+    ACTIVITY = IS_TRUE
 except:
     print(traceback.format_exc())
     print('qrng_anu is not responding.\n')
@@ -55,10 +55,10 @@ async def initGen():
     global ACTIVITY
     if GENERATOR is None:
         try:
-            #GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
+            GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
             GENERATOR = None
-            #ACTIVITY = IS_TRUE
-            #await client.change_presence(Activity=ACTIVITY)
+            ACTIVITY = IS_TRUE
+            await client.change_presence(Activity=ACTIVITY)
         except:
             print(traceback.format_exc())
             print('qrng_anu is not responding.\n')
