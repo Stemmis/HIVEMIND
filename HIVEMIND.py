@@ -839,6 +839,7 @@ async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=Fa
 async def init(ctx: interactions.SlashContext):
     "Initiative family of commands"
     pass
+    
 @init.subcommand(sub_cmd_name="start",
                 sub_cmd_description = "Start a new initiative encounter.",
 )
