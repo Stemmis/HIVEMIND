@@ -14,7 +14,7 @@ from sourcerandom import OnlineRandomnessSource
 
 #intents = discord.Intents.default() #Includes all intents EXCEPT privileged ones. Defined separately here in case I want to disable some intents later.
 
-client = interactions.Client() #The bot itself. Pass token as argument in console.
+client = interactions.Client(sync_interactions=False) #The bot itself. Pass token as argument in console.
 
 #Globals
 
