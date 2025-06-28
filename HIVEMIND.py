@@ -837,12 +837,12 @@ async def rollwod(ctx, pool:int, difficulty:int=6, modifier:int=0, crits:bool=Fa
 #Create an initiative encounter within the initiative database
 #Adds a new entry to the initiative database
 #Says the encounter ID in chat
-@interactions.slash_command(name = "init2")
-async def init2(ctx: interactions.SlashContext):
+@interactions.slash_command(name = "initt")
+async def initt(ctx: interactions.SlashContext):
     #"Initiative family of commands"
     pass
     
-@init.subcommand(sub_cmd_name="start",
+@initt.subcommand(sub_cmd_name="start",
                 sub_cmd_description = "Start a new initiative encounter.",
 )
 async def start(ctx: interactions.SlashContext):
@@ -860,7 +860,7 @@ async def start(ctx: interactions.SlashContext):
 #Remove an initiative encounter from the initiative database
 #Removes an entry from the initiative database based on supplied ID
 #Says the encounter ID in chat
-@init.subcommand(sub_cmd_name="end",
+@initt.subcommand(sub_cmd_name="end",
                 sub_cmd_description = "End an old initiative encounter.")
 @interactions.slash_option(
     name = "encounterid",
@@ -892,7 +892,7 @@ async def initend(ctx: interactions.SlashContext, encounterid):
     initiative.close()
 
 #Print all EIDs into console
-@init.subcommand(sub_cmd_name="view",
+@initt.subcommand(sub_cmd_name="view",
                 sub_cmd_description = "Debug command. Prints all initiative information into console.")
 async def initview(ctx: interactions.SlashContext):
     initiative = sqlite3.connect('init.db')
@@ -912,7 +912,7 @@ async def initview(ctx: interactions.SlashContext):
 #Roll random initiative for a specified character
 #Rolls dice of specified size and quantity with optional modifier, updates initiative table using specified encounter value with specified charactername and result
 #Outputs roll result in chat
-@init.subcommand(sub_cmd_name="roll",
+@initt.subcommand(sub_cmd_name="roll",
                 sub_cmd_description = "Roll initiative.")
 @interactions.slash_option(
     name = "encounterid",
@@ -989,7 +989,7 @@ async def initroll(ctx: interactions.SlashContext, encounterid, charactername, p
 #Manually edits initiative value of specified character within specified encounter to specified number.
 #If character does not belong to command user, bot will throw an exception and stop.
 #Outputs new initiative and updates database
-@init.subcommand(sub_cmd_name="set",
+@initt.subcommand(sub_cmd_name="set",
                 sub_cmd_description = "Set a character's initiative value.")
 @interactions.slash_option(
     name = "encounterid",
@@ -1030,7 +1030,7 @@ async def initset(ctx: interactions.SlashContext, encounterid, charactername, ne
 
 #Moves the initiative tracker up by 1 or loops back at end
 
-@init.subcommand(sub_cmd_name="next", sub_cmd_description = "Move the initiative tracker up by one.")
+@initt.subcommand(sub_cmd_name="next", sub_cmd_description = "Move the initiative tracker up by one.")
 @interactions.slash_option(
     name = "encounterid",
     description = "The ID of your encounter",
@@ -1075,7 +1075,7 @@ async def initnext(ctx: interactions.SlashContext, encounterid):
     initiative.close()
             
 #Moves the initiative tracker up by 1
-@init.subcommand(sub_cmd_name="order", sub_cmd_description = "View an encounter's initiative order.")
+@initt.subcommand(sub_cmd_name="order", sub_cmd_description = "View an encounter's initiative order.")
 @interactions.slash_option(
     name = "encounterid",
     description = "The ID of your encounter",
