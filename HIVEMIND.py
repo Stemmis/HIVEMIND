@@ -1058,7 +1058,7 @@ async def initnext(ctx: interactions.SlashContext, encounterid):
             currTrack = top
         try:
             #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=currTrack[2])
-            owner = await client.fetch_user(row[2])
+            owner = await client.fetch_user(currTrack[2])
             if currTrack != None:
                 await ctx.send(f"It is {owner.mention}'s turn as {currTrack[1]}.")
                 initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{currTrack[1]}' WHERE EID = {encounterid};")
