@@ -50,6 +50,9 @@ initiative.close()
 
 #Functions
 
+def setup(client):
+    ClaimCommand(client)
+
 async def initGen():
     global GENERATOR
     global ACTIVITY
