@@ -875,7 +875,8 @@ async def initend(ctx: interactions.SlashContext, encounterid):
         await ctx.send(f"Encounter over.")
     else:
         try:
-            owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=masterID)
+            #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=masterID)
+            owner = await interactions.get_user(masterID)
             await ctx.send(
             content =f"Only the master of an initiative encounter can end it. Ask {owner.user}!",
             ephemeral=True)
@@ -1056,7 +1057,8 @@ async def initnext(ctx: interactions.SlashContext, encounterid):
         if currTrack == None:
             currTrack = top
         try:
-            owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=currTrack[2])
+            #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=currTrack[2])
+            owner = await interactions.get_user(row[2])
             if currTrack != None:
                 await ctx.send(f"It is {owner.mention}'s turn as {currTrack[1]}.")
                 initiative.execute(f"UPDATE ENCOUNTER SET CURRENT = '{currTrack[1]}' WHERE EID = {encounterid};")
@@ -1090,7 +1092,8 @@ async def initorder(ctx: interactions.SlashContext, encounterid):
             for row in track:
                 if row[1] == current[2]:
                     msgContent = msgContent + f"-↓-↓-↓-This character's turn-↓-↓-↓-\n"
-                owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=row[2])
+                #owner = await interactions.get(client, interactions.Member, parent_id=ctx.guild_id, object_id=row[2])
+                owner = await interactions.get_user(row[2])
                 msgContent = msgContent + f"{row[3]}: {row[1]}, played by {owner.name}\n"
             msgContent = msgContent + f"```"
             await ctx.send(content = msgContent)
