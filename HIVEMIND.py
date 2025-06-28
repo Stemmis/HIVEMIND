@@ -14,7 +14,7 @@ from sourcerandom import OnlineRandomnessSource
 
 #intents = discord.Intents.default() #Includes all intents EXCEPT privileged ones. Defined separately here in case I want to disable some intents later.
 
-client = interactions.Client(sync_interactions=False) #The bot itself. Pass token as argument in console.
+client = interactions.Client() #The bot itself. Pass token as argument in console.
 
 #Globals
 
@@ -28,8 +28,9 @@ ACTIVITY = IS_PSEUDO
 
 #Initialize Generator
 try:
-    GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
-    ACTIVITY = IS_TRUE
+    #GENERATOR = sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True)
+    GENERATOR = None
+    #ACTIVITY = IS_TRUE
 except:
     print(traceback.format_exc())
     print('qrng_anu is not responding.\n')
@@ -54,9 +55,10 @@ async def initGen():
     global ACTIVITY
     if GENERATOR is None:
         try:
-            GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
-            ACTIVITY = IS_TRUE
-            await client.change_presence(Activity=ACTIVITY)
+            #GENERATOR = await sourcerandom.SourceRandom(source=OnlineRandomnessSource.QRNG_ANU, cache_size=1024, preload=True) #Try to re-initialize the random number generator.
+            GENERATOR = None
+            #ACTIVITY = IS_TRUE
+            #await client.change_presence(Activity=ACTIVITY)
         except:
             print(traceback.format_exc())
             print('qrng_anu is not responding.\n')
