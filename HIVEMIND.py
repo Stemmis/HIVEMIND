@@ -1119,7 +1119,8 @@ async def numberGen(count, min, max, mod):
         try:
             dieRoll = GENERATOR.randint(min,max)
         except:                                 #Look up: If this messes up, it'll default back to Python's default pseudorandomness.
-            print('Using Pseudorandomness...')
+            print(traceback.format_exc())
+            print('\n\nUsing Pseudorandomness...')
             dieRoll = random.randint(min,max)
             GENERATOR = None
             ACTIVITY = IS_PSEUDO
