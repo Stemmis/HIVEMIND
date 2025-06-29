@@ -1111,6 +1111,7 @@ async def initorder(ctx: interactions.SlashContext, encounterid):
 #Mod is the modifier, you just add or subtract a number.
 async def numberGen(count, min, max, mod):
     global GENERATOR
+    global ACTIVITY
     print(f"Roll {count} dice with {max} sides with {mod} added")
     result = mod
     rollList = [0];
@@ -1120,6 +1121,8 @@ async def numberGen(count, min, max, mod):
         except:                                 #Look up: If this messes up, it'll default back to Python's default pseudorandomness.
             print('Using Pseudorandomness...')
             dieRoll = random.randint(min,max)
+            GENERATOR = None
+            ACTIVITY = IS_PSEUDO
         rollList.append(dieRoll)
         result = result + dieRoll
     del rollList[0];
