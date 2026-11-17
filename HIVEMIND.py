@@ -1237,6 +1237,7 @@ async def numberGen(count, min, max, mod):
 
 while True:
     try:
+        sleep(1)
         client.start(str(sys.argv[1]))
     except:
         print("Bot crashed. Did we lose connection?")
