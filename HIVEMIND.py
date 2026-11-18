@@ -1223,14 +1223,18 @@ async def numberGen(count, min, max, mod):
     result = mod
     rollList = [0];
     for x in range(count):
-        try:
-            dieRoll = GENERATOR.randint(min,max)
-        except:                                 #Look up: If this messes up, it'll default back to Python's default pseudorandomness.
-            print(traceback.format_exc())
+        if(GENERATOR == None):
             print('\n\nUsing Pseudorandomness...')
             dieRoll = random.randint(min,max)
-            GENERATOR = None
-            ACTIVITY = IS_PSEUDO
+        else:
+            try:
+                dieRoll = GENERATOR.randint(min,max)
+            except:                                 #Look up: If this messes up, it'll default back to Python's default pseudorandomness.
+                print(traceback.format_exc())
+                print('\n\nUsing Pseudorandomness...')
+                dieRoll = random.randint(min,max)
+                GENERATOR = None
+                ACTIVITY = IS_PSEUDO
         rollList.append(dieRoll)
         result = result + dieRoll
     del rollList[0];
